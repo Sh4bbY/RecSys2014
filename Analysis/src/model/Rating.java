@@ -11,8 +11,8 @@ public class Rating implements Serializable
 	private String twitterUserId, imdbMovieId;
 	private Tweet tweet;
 	private int rating, scrapingTime;
-	private Result result;
 	private static Gson gson = new Gson();
+	private int predictedRetweets, predictedFavorites;
 	private ImdbData imdbData;
 
 	public Rating(String userId, String itemId, String rating, String scrapingTime, String jsonTweet)
@@ -69,6 +69,11 @@ public class Rating implements Serializable
 	public Tweet getTweet()
 	{
 		return tweet;
+	}
+	
+	public String getResult()
+	{
+		return tweet.getUser().getId()+","+tweet.getTweetId()+","+predictedRetweets + predictedFavorites;
 	}
 	
 	public Integer getValue(String key)

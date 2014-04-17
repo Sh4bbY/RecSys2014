@@ -164,7 +164,8 @@ public class AnalizeFrame extends JFrame
 			@Override
 			public void mouseClicked(MouseEvent evt) 
 			{
-		        JList<String> list = (JList<String>)evt.getSource();
+		        @SuppressWarnings("unchecked")
+				JList<String> list = (JList<String>)evt.getSource();
 		        int selectionIndex = -1;
 		        int listIndex;
 		        

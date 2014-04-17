@@ -8,8 +8,10 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-public class SeriesListCellRenderer extends JLabel implements ListCellRenderer
+public class SeriesListCellRenderer extends JLabel implements ListCellRenderer<String>
 {
+	private static final long serialVersionUID = 1L;
+
 	private List<Integer> selections;
 	public SeriesListCellRenderer(List<Integer> selections) 
 	{
@@ -17,9 +19,9 @@ public class SeriesListCellRenderer extends JLabel implements ListCellRenderer
 		setOpaque(true);
 	}
 	
-	public Component getListCellRendererComponent(JList paramlist, Object value, int index, boolean isSelected, boolean cellHasFocus) 
+	public Component getListCellRendererComponent(JList<? extends String> paramlist, String value, int index, boolean isSelected, boolean cellHasFocus) 
 	{
-	    setText(value.toString());
+	    setText(value);
 	    
 	    if (selections.contains(index)) 
 	    {

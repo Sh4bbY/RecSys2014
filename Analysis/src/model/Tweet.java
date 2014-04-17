@@ -34,7 +34,7 @@ public class Tweet implements Serializable
 	@Override
 	public String toString()
 	{
-		return "";//user.toString();
+		return "TweetObj id: "+id+" user: "+user.toString();
 	}
 	
 	public String getTweetId()

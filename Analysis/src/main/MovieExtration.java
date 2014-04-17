@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 import model.ImdbData;
 import model.Rating;
-import model.Result;
 
 
 public class MovieExtration
@@ -20,13 +19,15 @@ public class MovieExtration
 	
 	public static void main(String[] args)
 	{
+		@SuppressWarnings("unused")
 		MovieExtration extraction = new MovieExtration();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public MovieExtration()
 	{
 		dataManager = new DataManager();
-		ratings = dataManager.readTestData("F:\\Projects\\RecSys2014\\Analysis\\src\\assets\\training.dat");
+		ratings = dataManager.readData("F:\\Projects\\RecSys2014\\Analysis\\src\\assets\\training.dat");
 		
 		System.out.println(ratings.size() + " ratings parsed");
 		

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTML.Tag;
-import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 import javax.swing.text.html.parser.ParserDelegator;
 
@@ -21,8 +20,7 @@ public class ImdbExtractor implements Runnable
 {
 	private final String baseUrl = "http://www.imdb.com/title/tt";
 	
-    private HTMLDocument htmlDoc;
-    private String line, valueKey = null;
+    private String valueKey = null;
     private HashMap<String,ImdbData> results;
     private ImdbData imdbData;
     private ArrayList<Rating> ratings;
@@ -38,9 +36,7 @@ public class ImdbExtractor implements Runnable
 		if(results == null)
 		{
 			this.results = new HashMap<String, ImdbData>();
-		}	
-		
-		htmlDoc = new HTMLDocument();
+		}
 	}
 
 

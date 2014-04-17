@@ -9,10 +9,11 @@ import java.util.Comparator;
 
 import charting.BasicChart;
 import view.AnalizeFrame;
-import model.ImdbData;
 import model.Rating;
-import model.Result;
-import model.Tweet;
+
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 
 public class Analysis
 {	
@@ -22,9 +23,11 @@ public class Analysis
 	private ArrayList<Rating> ratings;
 	private AnalizeFrame frame;
 	private BasicChart chart;
+	public static final Logger logger = LogManager.getLogger(Analysis.class.getName());
 	
 	public static void main(String[] args)
 	{
+		@SuppressWarnings("unused")
 		Analysis analysis = new Analysis();
 	}
 	
@@ -33,35 +36,15 @@ public class Analysis
 		frame 			= new AnalizeFrame(this);
 		dataManager 	= new DataManager();
         chart			= new BasicChart();
-        
-		//ratings 		= readTestData(dataManager);
-		//imdbData 		= (HashMap<String, ImdbData>)DataManager.loadFromFile(IMDB_FILE_NAME);
-		
-		/*for(int i = 0; i < ratings.size(); i++)
-		{
-			if(imdbData.containsKey(ratings.get(i).getImdbId()))
-			{
-				ratings.get(i).setImdbData(imdbData.get(ratings.get(i).getImdbId()));
-			}
-			else
-			{
-				System.out.println(i + " - " + ratings.get(i).getImdbId());
-			}
-		}*/
-
-		//sortData();
-		
 	}
 	
 
 	public void readData(String fileName)
-	{
-		frame.setStatus("read data: "+fileName);
-		String basePath = new File("").getAbsolutePath();
-		
-		ratings = dataManager.readTestData(basePath + fileName);
-		System.out.println(" - " + ratings.size() + " Ratings parsed.");
-		frame.setStatus("");
+	{	
+		String filePath = new File("").getAbsolutePath() + fileName;
+
+		logger.info("read data: "+filePath);
+		ratings = dataManager.readData(filePath);
 	}
 	
 	public void drawChart(String[] series)

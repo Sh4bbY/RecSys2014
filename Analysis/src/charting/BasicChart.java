@@ -66,8 +66,6 @@ public class BasicChart extends JPanel
     		
     		series.add(x, rating.getValue(name));
     	}
-    	
-    	//s_favoriteCount.add(x, rating.getFavoriteCount());
     }
     
     public ChartPanel createChart()

@@ -3,42 +3,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import main.Analysis;
 import model.Rating;
 import model.Result;
 
 public class DataManager
 {	
-	public String readFile(String fileName)
-	{
-		String result = "";
-		
-		try
-		{
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
-	        String line;
-	        
-	        while((line = br.readLine()) != null) 
-	        {
-	        	result += line;
-	        }	
-	        
-	        br.close();
-	        
-	        return result;
-		}
-		catch(FileNotFoundException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public ArrayList<Rating> readTestData(String fileName)
+	public ArrayList<Rating> readData(String fileName)
 	{
 		boolean first = true;
 		ArrayList<Rating> ratings = new ArrayList<Rating>();
@@ -62,57 +33,42 @@ public class DataManager
 	        }	
 	        
 	        br.close();
-	        
+
+			Analysis.logger.info(" - " + ratings.size() + " Ratings parsed.");
 	        return ratings;
 		}
 		catch(FileNotFoundException e)
 		{
-			e.printStackTrace();
-			return null;
+			Analysis.logger.error(e.getMessage());
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
-			return null;
+			Analysis.logger.error(e.getMessage());
 		}
+		return null;
 	}
 	
-	public HashMap<String, Result> readTestResults(String fileName)
-	{
-		boolean first = true;
-		HashMap<String, Result> results = new HashMap<String, Result>();
-		Result result;
-		
+	public void writeResults(String fileName, ArrayList<Rating> ratings)
+	{	
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
 	        String line;
 	        
-	        while((line = br.readLine()) != null) 
+	        for(Rating rating : ratings) 
 	        {
-	        	if(first)
-	        	{
-	        		first = false;
-	        		continue;
-	        	}
-
-	        	result = parseTestResult(line);
-	        	results.put(result.getTweetId(), result);
-	        }	
+	        	bw.write(rating.getResult());
+	        }
 	        
-	        br.close();
-	        
-	        return results;
+	        bw.close();
 		}
 		catch(FileNotFoundException e)
 		{
 			e.printStackTrace();
-			return null;
 		}
 		catch(IOException e)
 		{
 			e.printStackTrace();
-			return null;
 		}
 	}
 
