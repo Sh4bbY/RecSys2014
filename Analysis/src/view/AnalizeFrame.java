@@ -34,6 +34,7 @@ public class AnalizeFrame extends JFrame
 	private ActionListener loadDataBtnListener, printBtnListener, orderDataBtnListener, filterDataBtnListener;
 	private MouseAdapter listClickListener;
 	private Analysis analysis;
+	private ChartPanel currentChart;
 	
 	private JLabel status;
 	private JPanel controlPanel;
@@ -45,6 +46,7 @@ public class AnalizeFrame extends JFrame
 	public AnalizeFrame(Analysis analysis)
 	{
 		this.analysis = analysis;
+		
 		seriesSelections = new ArrayList<Integer>();
 		
 		createListeners();
@@ -61,6 +63,7 @@ public class AnalizeFrame extends JFrame
 		this.setSize(width, height);
 		this.setTitle(windowTitle);
 		this.setLocation(Statics.getCenterLocation(this.getWidth(), this.getHeight()));
+		this.setLayout(new BorderLayout());
 	}
 	
 	private void createElements()
@@ -182,9 +185,9 @@ public class AnalizeFrame extends JFrame
 		            {
 		            	seriesSelections.add(selectionIndex);
 		            }
+			        list.repaint();
 		        }
 		        
-		        list.repaint();
 		    }
 		};
 		
@@ -210,7 +213,13 @@ public class AnalizeFrame extends JFrame
 	
 	public void setChart(ChartPanel cPanel)
 	{
+		if(currentChart != null)
+		{
+			this.remove(currentChart);
+		}
+		
 		this.add(cPanel,BorderLayout.CENTER);
-		this.setVisible(true);
+		currentChart = cPanel;
+		this.validate();
 	}
 }

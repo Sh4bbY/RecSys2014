@@ -1,6 +1,11 @@
 package model;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Tweet implements Serializable
 {
@@ -55,5 +60,20 @@ public class Tweet implements Serializable
 	public Integer getFavoriteCount()
 	{
 		return favorite_count;
+	}
+	
+	public Date getCreatedAt()
+	{
+		DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+	    
+		try
+		{
+			return df.parse(created_at);
+		} 
+		catch (ParseException e)
+		{
+			e.printStackTrace();
+			return null;
+		} 
 	}
 }

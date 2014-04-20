@@ -2,7 +2,7 @@
 <Configuration>
   <Appenders>
     <Console name="STDOUT" target="SYSTEM_OUT">
-      <PatternLayout pattern="%highlight{%d %-5p %C{2} (%F:%L) - %m%n}"/>
+      <PatternLayout pattern="%highlight{%d %-5p %C{2} (%F:%L) - %m%n}{STYLE=Logback}"/>
     </Console>
   </Appenders>
   <Loggers>

@@ -1,7 +1,6 @@
 package model;
 
 import java.io.Serializable;
-
 import com.google.gson.Gson;
 
 public class Rating implements Serializable
@@ -15,10 +14,10 @@ public class Rating implements Serializable
 	private int predictedRetweets, predictedFavorites;
 	private ImdbData imdbData;
 
-	public Rating(String userId, String itemId, String rating, String scrapingTime, String jsonTweet)
+	public Rating(String twitterUserId, String imdbMovieId, String rating, String scrapingTime, String jsonTweet)
 	{
-		this.twitterUserId = userId;
-		this.imdbMovieId = itemId;
+		this.twitterUserId = twitterUserId;
+		this.imdbMovieId = imdbMovieId;
 		
 		this.rating = (int)Long.parseLong(rating);
 		this.scrapingTime = Integer.parseInt(scrapingTime);
@@ -76,6 +75,19 @@ public class Rating implements Serializable
 		return tweet.getUser().getId()+","+tweet.getTweetId()+","+predictedRetweets + predictedFavorites;
 	}
 	
+	public String getTwitterUserId()
+	{
+		return twitterUserId;
+	}
+	
+	public int getOnlineTime()
+	{
+		long created =  tweet.getCreatedAt().getTime()/1000;
+		int days = (int)(scrapingTime - created) / (60*60*24);
+		
+		return days; 
+	}
+	
 	public Integer getValue(String key)
 	{
 		switch(key)
@@ -84,9 +96,9 @@ public class Rating implements Serializable
 			case "retweet_count": 	return tweet.getRetweetCount();
 			case "favourite_count": return tweet.getFavoriteCount();
 			case "rating": 			return rating;
-			case "scraping_time": 	return scrapingTime;
 			case "friends_count": 	return tweet.getUser().getFriendsCount();
 			case "followers_count": return tweet.getUser().getFollowersCount();
+			case "online_time": 	return getOnlineTime();
 		}
 		
 		System.out.println("key not found");

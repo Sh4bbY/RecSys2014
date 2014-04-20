@@ -2,6 +2,7 @@ package charting;
 
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -27,12 +28,13 @@ public class BasicChart extends JPanel
 	
 	private XYSeriesCollection dataset;
 	private XYDotRenderer dotRenderer;
-	private int ratingsOutOfRange = 0;
+	private XYSeries userSeries;
 	   
     public BasicChart() 
     {    	
     	dataset = new XYSeriesCollection();
     	dotRenderer = new XYDotRenderer();
+    	userSeries = new XYSeries("userData");
     	
     	initialize();
     }
@@ -52,6 +54,12 @@ public class BasicChart extends JPanel
     	}
     }
     
+
+    public void addUserData(int x, ArrayList<Rating> ratings)
+    {    		
+    	userSeries.add(x, ratings.size());
+    }
+    
     public void addData(int x, Rating rating)
     {    		
     	for(XYSeries series : this.series)
@@ -60,7 +68,6 @@ public class BasicChart extends JPanel
     		
     		if(name.equals("rating") && rating.getValue(name) > 10 || rating.getValue(name) < 0)
     		{
-    			ratingsOutOfRange++;
     			continue;
     		}
     		
@@ -70,13 +77,14 @@ public class BasicChart extends JPanel
     
     public ChartPanel createChart()
     {
-    	System.out.println("ratings out of Range: "+ratingsOutOfRange);
     	dataset.removeAllSeries();
     	
     	for(XYSeries series : this.series)
     	{
     		dataset.addSeries(series);
     	}
+    	
+    	dataset.addSeries(userSeries);
     	
     	final JFreeChart chart = ChartFactory.createXYLineChart(
                 "Twitter Engagement",       // chart title
@@ -89,7 +97,6 @@ public class BasicChart extends JPanel
                 false
             );
 
-    	
     	plot = chart.getXYPlot();
     	
         final NumberAxis domainAxis = new NumberAxis("tweet");

@@ -5,14 +5,23 @@ import java.util.HashMap;
 
 import main.Analysis;
 import model.Rating;
-import model.Result;
 
 public class DataManager
 {	
+	HashMap<String, ArrayList<Rating>> userMap;
+	
+	public HashMap<String, ArrayList<Rating>> getUserMap()
+	{
+		return userMap;
+	}
+	
 	public ArrayList<Rating> readData(String fileName)
 	{
+		userMap = new HashMap<String, ArrayList<Rating>>();
+		
 		boolean first = true;
 		ArrayList<Rating> ratings = new ArrayList<Rating>();
+		ArrayList<Rating> userRatings;
 		Rating rating;
 		
 		try
@@ -28,18 +37,25 @@ public class DataManager
 	        		continue;
 	        	}
 
-	        	rating = parseTestData(line);
+	        	rating = parseData(line);
 	        	ratings.add(rating);
+	        	
+	        	if(userMap.containsKey(rating.getTwitterUserId()))
+	        	{
+	        		userMap.get(rating.getTwitterUserId()).add(rating);
+	        	}
+	        	else
+	        	{
+	        		userRatings = new ArrayList<Rating>();
+	        		userRatings.add(rating);
+		        	userMap.put(rating.getTwitterUserId(), userRatings);
+	        	}
 	        }	
 	        
 	        br.close();
 
 			Analysis.logger.info(" - " + ratings.size() + " Ratings parsed.");
 	        return ratings;
-		}
-		catch(FileNotFoundException e)
-		{
-			Analysis.logger.error(e.getMessage());
 		}
 		catch(IOException e)
 		{
@@ -53,7 +69,6 @@ public class DataManager
 		try
 		{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
-	        String line;
 	        
 	        for(Rating rating : ratings) 
 	        {
@@ -73,7 +88,7 @@ public class DataManager
 	}
 
 	
-	private Rating parseTestData(String line)
+	private Rating parseData(String line)
 	{
 		int idx = line.indexOf('{');
 		
@@ -89,20 +104,6 @@ public class DataManager
 		jsonTweet = line.substring(idx);
 		
 		return new Rating(userId, itemId, rating, scraptingTime, jsonTweet);
-	}
-	
-	private Result parseTestResult(String line)
-	{		
-		String userId, tweetId;
-		int engagement;
-		String[] tmp;
-		
-		tmp = line.split(",");
-		userId = tmp[0];
-		tweetId = tmp[1];
-		engagement = Integer.parseInt(tmp[2]);
-		
-		return new Result(userId,tweetId,engagement);
 	}
 	
 	public static void storeToFile(String fileName, Object object)

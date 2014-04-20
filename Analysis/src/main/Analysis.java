@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import charting.BasicChart;
 import view.AnalizeFrame;
@@ -17,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 
 public class Analysis
 {	
-	public static final String[] ATTRIBUTES = {"engagement","retweet_count","favourite_count","rating","scraping_time", "friends_count", "followers_count"};
+	public static final String[] ATTRIBUTES = {"engagement","retweet_count","favourite_count","rating","online_time", "friends_count", "followers_count"};
 	
 	private DataManager dataManager;
 	private ArrayList<Rating> ratings;
@@ -54,6 +55,13 @@ public class Analysis
         for(int i=0; i < ratings.size(); i++)
         {
         	chart.addData(i, ratings.get(i));
+        }
+        
+        HashMap<String,ArrayList<Rating>> userMap = dataManager.getUserMap();
+        int i=0;
+        for(String userId : userMap.keySet())
+        {
+        	chart.addUserData(i++, userMap.get(userId));
         }
 
         frame.setChart(chart.createChart());
