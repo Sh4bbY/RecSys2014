@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("unused")
 public class TweetUser implements Serializable
 {
 	private static final long	serialVersionUID	= 1L;

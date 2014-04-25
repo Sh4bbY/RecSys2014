@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import main.Analysis;
+import model.DataStructure;
 import model.Rating;
 
 public class DataManager
@@ -15,13 +16,11 @@ public class DataManager
 		return userMap;
 	}
 	
-	public ArrayList<Rating> readData(String fileName)
+	public DataStructure readData(String fileName)
 	{
-		userMap = new HashMap<String, ArrayList<Rating>>();
+		DataStructure dataStructure = new DataStructure();
 		
-		boolean first = true;
-		ArrayList<Rating> ratings = new ArrayList<Rating>();
-		ArrayList<Rating> userRatings;
+		boolean firstLine = true;
 		Rating rating;
 		
 		try
@@ -31,36 +30,28 @@ public class DataManager
 	        
 	        while((line = br.readLine()) != null) 
 	        {
-	        	if(first)
+	        	if(firstLine)
 	        	{
-	        		first = false;
+	        		firstLine = false;
 	        		continue;
 	        	}
 
 	        	rating = parseData(line);
-	        	ratings.add(rating);
-	        	
-	        	if(userMap.containsKey(rating.getTwitterUserId()))
-	        	{
-	        		userMap.get(rating.getTwitterUserId()).add(rating);
-	        	}
-	        	else
-	        	{
-	        		userRatings = new ArrayList<Rating>();
-	        		userRatings.add(rating);
-		        	userMap.put(rating.getTwitterUserId(), userRatings);
-	        	}
+	        	dataStructure.addData(rating);
 	        }	
 	        
 	        br.close();
 
-			Analysis.logger.info(" - " + ratings.size() + " Ratings parsed.");
-	        return ratings;
+			Analysis.logger.info("readData finished.");
+			Analysis.logger.info(dataStructure);
+			
+	        return dataStructure;
 		}
 		catch(IOException e)
 		{
 			Analysis.logger.error(e.getMessage());
 		}
+		
 		return null;
 	}
 	

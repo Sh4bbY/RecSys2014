@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+@SuppressWarnings("unused")
 public class Tweet implements Serializable
 {
 	private static final long	serialVersionUID	= 1L;

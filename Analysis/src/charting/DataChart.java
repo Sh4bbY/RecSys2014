@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import model.DataStructure;
 import model.Rating;
 
 import org.jfree.chart.ChartFactory;
@@ -18,7 +19,7 @@ import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-public class BasicChart extends JPanel
+public class DataChart extends JPanel
 {
 	private static final long	serialVersionUID	= 1L;
 	
@@ -28,13 +29,11 @@ public class BasicChart extends JPanel
 	
 	private XYSeriesCollection dataset;
 	private XYDotRenderer dotRenderer;
-	private XYSeries userSeries;
 	   
-    public BasicChart() 
+    public DataChart() 
     {    	
     	dataset = new XYSeriesCollection();
     	dotRenderer = new XYDotRenderer();
-    	userSeries = new XYSeries("userData");
     	
     	initialize();
     }
@@ -54,14 +53,11 @@ public class BasicChart extends JPanel
     	}
     }
     
-
-    public void addUserData(int x, ArrayList<Rating> ratings)
-    {    		
-    	userSeries.add(x, ratings.size());
-    }
     
-    public void addData(int x, Rating rating)
-    {    		
+    
+    public void setData(DataStructure data, ChartConfiguration config)
+    {
+    	/*
     	for(XYSeries series : this.series)
     	{
     		String name = (String)series.getKey();
@@ -73,6 +69,7 @@ public class BasicChart extends JPanel
     		
     		series.add(x, rating.getValue(name));
     	}
+    	*/
     }
     
     public ChartPanel createChart()
@@ -83,8 +80,6 @@ public class BasicChart extends JPanel
     	{
     		dataset.addSeries(series);
     	}
-    	
-    	dataset.addSeries(userSeries);
     	
     	final JFreeChart chart = ChartFactory.createXYLineChart(
                 "Twitter Engagement",       // chart title

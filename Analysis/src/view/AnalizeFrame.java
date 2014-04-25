@@ -3,7 +3,9 @@ package view;
 import helper.Statics;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -19,6 +21,10 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 
 import main.Analysis;
 
@@ -31,17 +37,19 @@ public class AnalizeFrame extends JFrame
 	private final String windowTitle = "Chart Frame"; 
 	private final int width = 800, height = 500;
 	private List<Integer> seriesSelections;
-	private ActionListener loadDataBtnListener, printBtnListener, orderDataBtnListener, filterDataBtnListener;
+	private ActionListener loadDataBtnListener, printBtnListener, configDataBtnListener;
 	private MouseAdapter listClickListener;
+	private JTabbedPane chartTabs;
 	private Analysis analysis;
 	private ChartPanel currentChart;
 	
-	private JLabel status;
+	private JScrollPane logPane;
+	private JTextArea logArea;
 	private JPanel controlPanel;
-	private JButton loadDataButton, orderDataButton, filterDataButton, printDataButton;
+	private JButton loadDataButton, configDataButton, printDataButton;
 	private JList<String> seriesList;
-	private FilterDialog filterDialog;
-	private OrderDialog orderDialog;
+	
+	private ConfigDialog configDialog;
 	
 	public AnalizeFrame(Analysis analysis)
 	{
@@ -86,25 +94,28 @@ public class AnalizeFrame extends JFrame
 		loadDataButton.addActionListener(loadDataBtnListener);
 		loadDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
-		filterDataButton = new JButton("Filter Data");
-		filterDataButton.addActionListener(filterDataBtnListener);
-		filterDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-		filterDataButton.setVisible(false);
+		configDataButton = new JButton("Configuration");
+		configDataButton.addActionListener(configDataBtnListener);
+		configDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+		configDataButton.setVisible(true);
 		
-		orderDataButton = new JButton("Order Data");
-		orderDataButton.addActionListener(orderDataBtnListener);
-		orderDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-		orderDataButton.setVisible(false);
-		
-		printDataButton = new JButton("Print Data");
+		printDataButton = new JButton("Print Chart");
 		printDataButton.addActionListener(printBtnListener);
 		printDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 		printDataButton.setVisible(false);
 		
-		filterDialog = new FilterDialog(analysis);
-		orderDialog = new OrderDialog(analysis);
+		configDialog = new ConfigDialog(analysis);
 		
-		status = new JLabel("test");
+		logArea = new JTextArea();
+		logArea.setEditable(false);
+		
+		logPane = new JScrollPane(logArea);
+		logPane.setPreferredSize(new Dimension (width, 50));
+
+		chartTabs = new JTabbedPane();
+				
+		//logPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		//logPane.setSize(width, 100);
 	}
 	
 	private void createListeners()
@@ -122,19 +133,18 @@ public class AnalizeFrame extends JFrame
 				}
 
 				analysis.readData(s);
-				orderDataButton.setVisible(true);
 				printDataButton.setVisible(true);
-				filterDataButton.setVisible(true);
+				configDataButton.setVisible(false);
 				seriesList.setVisible(true);
 			}		
 		};
 		
-		filterDataBtnListener = new ActionListener()
+		configDataBtnListener = new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				filterDialog.setVisible(true);
+				configDialog.setVisible(true);
 			}		
 		};
 		
@@ -149,16 +159,7 @@ public class AnalizeFrame extends JFrame
 				{
 					series[i] = Analysis.ATTRIBUTES[seriesSelections.get(i)];
 				}
-				analysis.drawChart(series);
-			}		
-		};
-		
-		orderDataBtnListener = new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				orderDialog.setVisible(true);			
+				analysis.drawChart();
 			}		
 		};
 		
@@ -197,29 +198,23 @@ public class AnalizeFrame extends JFrame
 	{
 		controlPanel.add(loadDataButton);
 		controlPanel.add(seriesList);
-		controlPanel.add(orderDataButton);
-		controlPanel.add(filterDataButton);
+		controlPanel.add(configDataButton);
 		controlPanel.add(printDataButton);
 		
 		this.add(controlPanel, BorderLayout.EAST);
-		this.add(status, BorderLayout.SOUTH);
-		
+
+		this.add(logPane, BorderLayout.SOUTH);
+		this.add(chartTabs,BorderLayout.CENTER);		
 	}
 	
-	public void setStatus(String status)
-	{
-		this.status.setText(status);
-	}
-	
-	public void setChart(ChartPanel cPanel)
+	public void addChart(ChartPanel cPanel)
 	{
 		if(currentChart != null)
 		{
-			this.remove(currentChart);
+			chartTabs.remove(currentChart);
 		}
 		
-		this.add(cPanel,BorderLayout.CENTER);
+		chartTabs.add(cPanel);
 		currentChart = cPanel;
-		this.validate();
 	}
 }

@@ -1,42 +1,45 @@
 package view;
 
-import helper.Statics;
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import helper.Statics;
+
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import main.Analysis;
 
-public class OrderDialog extends JDialog
+public class ConfigDialog extends JDialog
 {
 	private static final long	serialVersionUID	= 1L;
-	private static final String[] ORDERING = {"ASC", "DESC"};
 	
 	private Analysis analysis;
 	
-	private JButton orderBtn, cancelBtn;
-	private JPanel btnPanel, orderPanel;
-	private JComboBox<String> orderAttribute, ordering;
-	private ActionListener orderBtnListener, cancelBtnListener;
+	private FilterPanel filterPanel;
+	private OrderPanel orderPanel;
+	private AxisPanel axisPanel;
+
+	private ActionListener okBtnListener, cancelBtnListener;
+	private JButton okBtn, cancelBtn;
+	private JPanel configPanel, btnPanel;
 	
-	private int width = 400, height = 200;
+	private int width = 600, height = 400;
 	
-	public OrderDialog(Analysis analysis)
+	public ConfigDialog(Analysis analysis)
 	{
 		this.analysis = analysis;
+
 		createListeners();
 		initialize();
 		createElements();
 		attachElements();
 	}
-	
 	private void initialize()
 	{
 		this.setSize(width, height);
@@ -46,25 +49,31 @@ public class OrderDialog extends JDialog
 	
 	private void createElements()
 	{
-		orderPanel = new JPanel();
-		orderPanel.setLayout(new FlowLayout());
-		orderAttribute = new JComboBox<String>(Analysis.ATTRIBUTES);
-		ordering = new JComboBox<String>(ORDERING);
-		btnPanel = new JPanel();
-		orderBtn = new JButton("Order");	
-		orderBtn.addActionListener(orderBtnListener);
+		okBtn = new JButton("OK");	
+		okBtn.addActionListener(okBtnListener);
+		
 		cancelBtn = new JButton("Cancel");	
 		cancelBtn.addActionListener(cancelBtnListener);
+		
+		configPanel = new JPanel();
+		configPanel.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		
+		btnPanel = new JPanel();
+		configPanel.setLayout(new FlowLayout());
+
+		axisPanel = new AxisPanel();
+		orderPanel = new OrderPanel();
+		filterPanel = new FilterPanel();
 	}
 
 	private void createListeners()
 	{		
-		orderBtnListener = new ActionListener()
+		okBtnListener = new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				analysis.sortData((String)orderAttribute.getSelectedItem(), ordering.getSelectedItem().equals(ORDERING[0]));
+				//TODO do something
 				setVisible(false);
 			}		
 		};
@@ -81,12 +90,15 @@ public class OrderDialog extends JDialog
 	
 	private void attachElements()
 	{
-		orderPanel.add(orderAttribute);
-		orderPanel.add(ordering);
-		this.add(orderPanel);
+		configPanel.add(axisPanel);
+		configPanel.add(orderPanel);
+		configPanel.add(filterPanel);
 		
-		btnPanel.add(orderBtn);
+		btnPanel.add(okBtn);
 		btnPanel.add(cancelBtn);
+
+		this.add(configPanel, BorderLayout.CENTER);
 		this.add(btnPanel, BorderLayout.SOUTH);
 	}
+	
 }

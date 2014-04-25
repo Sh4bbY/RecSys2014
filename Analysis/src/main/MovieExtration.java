@@ -27,7 +27,7 @@ public class MovieExtration
 	public MovieExtration()
 	{
 		dataManager = new DataManager();
-		ratings = dataManager.readData("F:\\Projects\\RecSys2014\\Analysis\\src\\assets\\training.dat");
+		//ratings = dataManager.readData("F:\\Projects\\RecSys2014\\Analysis\\src\\assets\\training.dat");
 		
 		System.out.println(ratings.size() + " ratings parsed");
 		
