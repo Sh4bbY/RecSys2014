@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import charting.ChartConfiguration;
 import main.Analysis;
 
 public class ConfigDialog extends JDialog
@@ -28,11 +29,13 @@ public class ConfigDialog extends JDialog
 	private ActionListener okBtnListener, cancelBtnListener;
 	private JButton okBtn, cancelBtn;
 	private JPanel configPanel, btnPanel;
+	private ChartConfiguration config;
 	
 	private int width = 600, height = 400;
 	
 	public ConfigDialog(Analysis analysis)
 	{
+		this.config = new ChartConfiguration();
 		this.analysis = analysis;
 
 		createListeners();
@@ -73,7 +76,11 @@ public class ConfigDialog extends JDialog
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				//TODO do something
+				config.setXAxis(axisPanel.getXAxis());
+				config.setYAttributes(axisPanel.getYAttributes());
+				config.setOrder(orderPanel.getOrder());
+				config.setFilter(filterPanel.getFilter());
+				
 				setVisible(false);
 			}		
 		};

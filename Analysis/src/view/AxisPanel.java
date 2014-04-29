@@ -12,10 +12,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 
+import charting.ChartConfiguration;
 import charting.attributes.Attribute;
 import charting.attributes.MovieAttr;
 import charting.attributes.RatingAttr;
 import charting.attributes.UserAttr;
+import charting.attributes.XAxis;
 
 public class AxisPanel extends JPanel
 {
@@ -79,14 +81,15 @@ public class AxisPanel extends JPanel
 		
 		bGroup = new ButtonGroup();
 		
+		XAxis[] xAxis = XAxis.values(); 
 
-		xAttributes = new JRadioButton[3];
-		attributePanel = new JPanel[3];
+		xAttributes = new JRadioButton[xAxis.length];
+		attributePanel = new JPanel[xAxis.length];
 		Attribute[] attrArr = null;
 
-		yAttributes = new JCheckBox[3][];
+		yAttributes = new JCheckBox[xAxis.length][];
 		
-		for(int i=0; i<3; i++)
+		for(int i=0; i<xAxis.length; i++)
 		{
 			attributePanel[i] = new JPanel();
 			attributePanel[i].setVisible(false);
@@ -98,10 +101,13 @@ public class AxisPanel extends JPanel
 			
 			switch(i)
 			{
-				case 0: attrArr = RatingAttr.values(); 	xAttributes[i].setText(RATING); break;
-				case 1: attrArr = UserAttr.values(); 	xAttributes[i].setText(USER); 	break;
-				case 2: attrArr = MovieAttr.values(); 	xAttributes[i].setText(MOVIE); 	break;
+				case 0: attrArr = RatingAttr.values(); 	break;
+				case 1: attrArr = UserAttr.values(); 	break;
+				case 2: attrArr = MovieAttr.values(); 	break;
 			}
+			
+			xAttributes[i].setText(xAxis[i].toString());
+			
 			
 
 			yAttributes[i] = new JCheckBox[attrArr.length];
@@ -113,6 +119,8 @@ public class AxisPanel extends JPanel
 			}
 		}
 	}
+	
+	public 
 	
 	private void attachElements()
 	{
