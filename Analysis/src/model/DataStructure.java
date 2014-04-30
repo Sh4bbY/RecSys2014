@@ -44,7 +44,7 @@ public class DataStructure
 			series[i] = new XYSeries(attributes[i].toString());
 		}
 
-		final RatingAttr sortingAttr = config.getSortingAttribute();
+		final RatingAttr sortingAttr = (RatingAttr)config.getSortingAttribute();
 		final boolean isSortingASC = config.isSortingASC();
 		
     	Collections.sort(ratings,new Comparator<Rating>()

@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -28,9 +29,12 @@ public class AxisPanel extends JPanel
 	private JLabel xTitle,yTitle;
 	private ButtonGroup bGroup;
 	private ActionListener radioBtnListener;
+	private ConfigDialog configDialog;
 	
-	public AxisPanel()
+	public AxisPanel(ConfigDialog configDialog)
 	{
+		this.configDialog = configDialog;
+		
 		initialize();
 		createListeners();
 		createElements();
@@ -42,6 +46,7 @@ public class AxisPanel extends JPanel
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(new TitledBorder("Axis"));
 		setAlignmentY(JPanel.TOP_ALIGNMENT);
+		setPreferredSize(new Dimension(150, 300));
 	}
 	
 	private void createListeners()
@@ -69,6 +74,8 @@ public class AxisPanel extends JPanel
 					case User:		showAttributePanel(1); break;
 					case Movie:		showAttributePanel(2); break;
 				}
+				
+				configDialog.xAxisUpdate(selection);
 			}
 		};
 	}

@@ -1,5 +1,7 @@
 package view;
 
+import java.awt.Dimension;
+
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -10,12 +12,12 @@ import charting.attributes.MovieAttr;
 import charting.attributes.RatingAttr;
 import charting.attributes.UserAttr;
 import charting.attributes.XAxis;
-import main.Analysis;
 
 public class OrderPanel extends JPanel
 {
 	private static final long	serialVersionUID	= 1L;
 	private static final String[] ORDERING = {"ASC", "DESC"};
+	private Attribute[] attributes;
 	
 	private JComboBox<String> orderAttribute, ordering;
 	
@@ -31,33 +33,36 @@ public class OrderPanel extends JPanel
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setBorder(new TitledBorder("Order"));
 		setAlignmentY(JPanel.TOP_ALIGNMENT);
+		setPreferredSize(new Dimension(150, 300));
 	}
 	
 	private void createElements()
 	{
 		orderAttribute = new JComboBox<String>();
 		ordering = new JComboBox<String>(ORDERING);		
+
+		ConfigDialog.setComponentMaxHeight(orderAttribute);
+		ConfigDialog.setComponentMaxHeight(ordering);
 	}
 	
-	public void updateAttributes(XAxis xAxis)
+	public void updateXAxis(XAxis xAxis)
 	{
-		Attribute[] attributes = null;
+		orderAttribute.removeAllItems();
 		
 		switch(xAxis)
 		{
-			case Rating: attributes = RatingAttr.values();break;
-			case User: attributes = UserAttr.values();break;
+			case Rating:attributes = RatingAttr.values();break;
+			case User: 	attributes = UserAttr.values();break;
 			case Movie: attributes = MovieAttr.values();break;
 		}
 		
-		String[] names = new String[attributes.length];
-		
 		for(int i=0;i<attributes.length;i++)
 		{
-			names[i] = attributes[i].toString();
+			orderAttribute.addItem(attributes[i].toString());
 		}
 		
-		orderAttribute = new JComboBox<String>(names);
+		orderAttribute.revalidate();
+		orderAttribute.repaint();
 	}
 	
 	private void attachElements()
@@ -71,8 +76,8 @@ public class OrderPanel extends JPanel
 		return ordering.getSelectedIndex() == 0;
 	}
 
-	public int getOrderAttribute()
+	public Attribute getOrderAttribute()
 	{
-		return orderAttribute.getSelectedIndex();
+		return attributes[orderAttribute.getSelectedIndex()];
 	}
 }

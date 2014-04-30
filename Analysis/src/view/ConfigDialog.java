@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,11 +11,14 @@ import helper.Statics;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
 import charting.ChartConfiguration;
+import charting.attributes.XAxis;
 
 public class ConfigDialog extends JDialog
 {
@@ -70,11 +74,12 @@ public class ConfigDialog extends JDialog
 		btnPanel = new JPanel();
 		configPanel.setLayout(new FlowLayout());
 
-		axisPanel = new AxisPanel();
+		axisPanel = new AxisPanel(this);
 		orderPanel = new OrderPanel();
 		filterPanel = new FilterPanel();
 	}
 
+	
 	private void createListeners()
 	{		
 		okBtnListener = new ActionListener()
@@ -87,7 +92,7 @@ public class ConfigDialog extends JDialog
 				config.setUserAttributes(axisPanel.getUserAttributes());
 				config.setMovieAttributes(axisPanel.getMovieAttributes());
 				config.setOrderASC(orderPanel.isOrderASC());
-				//config.setSortingAttribute(orderPanel.isOrderASC());
+				config.setSortingAttribute(orderPanel.getOrderAttribute());
 				//config.setOrderAttribute(orderPanel.getOrderAttribute());
 				//config.setFilter(filterPanel.getFilter());
 				setVisible(false);
@@ -137,4 +142,17 @@ public class ConfigDialog extends JDialog
 		this.add(btnPanel, BorderLayout.SOUTH);
 	}
 	
+	public void xAxisUpdate(XAxis xAxis)
+	{
+		orderPanel.updateXAxis(xAxis);
+		filterPanel.updateXAxis(xAxis);
+	}
+
+	public static void setComponentMaxHeight(JComponent jc)
+	{
+		Dimension max = jc.getMaximumSize();
+		max.height = jc.getPreferredSize().height;
+		
+		jc.setMaximumSize(max); 
+	}
 }
