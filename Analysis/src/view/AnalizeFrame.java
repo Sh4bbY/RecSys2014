@@ -151,5 +151,6 @@ public class AnalizeFrame extends JFrame
 		cPanel.setName("Chart #"+(chartPanels.size()+1));
 		chartPanels.add(cPanel);
 		chartTabs.add(cPanel);
+		chartTabs.setSelectedIndex(chartTabs.getTabCount()-1);
 	}
 }

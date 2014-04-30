@@ -1,16 +1,21 @@
 package model;
 
+import helper.QuickSort;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.jfree.data.xy.XYSeries;
 
 import charting.ChartConfiguration;
 import charting.attributes.Attribute;
 import charting.attributes.RatingAttr;
+import charting.attributes.UserAttr;
 import charting.attributes.XAxis;
 import main.Analysis;
 
@@ -37,46 +42,66 @@ public class DataStructure
 	{
 		Attribute[] attributes = config.getAttributes();
 		XYSeries[] series = new XYSeries[attributes.length];
-		Rating rating;
+		QuickSort qSort = new QuickSort();
+		
+		double[][] values = getValues(config);
+		
+		qSort.sort(values, config.getSortingAttrIndex(), config.isSortingASC());
 		
 		for(int i=0; i<attributes.length; i++)
 		{
 			series[i] = new XYSeries(attributes[i].toString());
-		}
-
-		final RatingAttr sortingAttr = (RatingAttr)config.getSortingAttribute();
-		final boolean isSortingASC = config.isSortingASC();
-		
-    	Collections.sort(ratings,new Comparator<Rating>()
-		{
-			@Override
-			public int compare(Rating r1, Rating r2)
+			
+			for(int o=0;o<values[0].length; o++)
 			{
-				if(isSortingASC)
-					return r1.getValue(sortingAttr).compareTo(r2.getValue(sortingAttr));
-				
-				return r2.getValue(sortingAttr).compareTo(r1.getValue(sortingAttr));
+				series[i].add(o,values[i][o]);
 			}
-		});
+		}
 		
+		return series;
+	}
+	
+	private double[][] getValues(ChartConfiguration config)
+	{
+		Attribute[] attributes = config.getAttributes();
+		double[][] values = null;
+		ArrayList<Rating> tmp;
+		Iterator<String> iterator;
+		Rating rating;
+		int idx;
 		
 		switch(config.getXAxis())
 		{
-			case Rating:				
+			case Rating:		
+				values = new double[attributes.length][ratings.size()];
 				for(int i=0; i < ratings.size(); i++)
 				{
 					rating = ratings.get(i);
 					
 					for(int o=0;o<attributes.length;o++)
 					{
-						series[o].add(i,rating.getValue((RatingAttr)attributes[o]));
+						values[o][i] = rating.getValue((RatingAttr)attributes[o]);
 					}
 				}
 				break;
 				
 			case User:
+				values = new double[attributes.length][users.size()];
+				iterator = users.keySet().iterator();
+				idx = 0;
+				while(iterator.hasNext())
+				{
+					tmp = users.get(iterator.next());
+					
+					for(int o=0;o<attributes.length;o++)
+					{
+						values[o][idx] = getUserValue(tmp,(UserAttr)attributes[o]);
+					}
+					
+					idx++;
+				}
+				break;
 			case Movie:
-				
 				for(int i=0; i < ratings.size(); i++)
 				{
 					for(Attribute attr : attributes)
@@ -86,7 +111,27 @@ public class DataStructure
 				}
 		}
 		
-		return series;
+		return values;
+	}
+	
+	private double getUserValue(ArrayList<Rating> ratings, UserAttr attr)
+	{
+		double value = 0;
+		
+		switch(attr)
+		{
+			case AmountOfTweets: 	value = ratings.size(); 
+									break;
+									
+			case Engagement:		for(Rating rating : ratings)
+									{
+										value += rating.getValue(RatingAttr.Engagement);
+									}
+									break;
+									
+		}
+		
+		return value;
 	}
 	
     

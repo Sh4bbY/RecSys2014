@@ -76,8 +76,8 @@ public class OrderPanel extends JPanel
 		return ordering.getSelectedIndex() == 0;
 	}
 
-	public Attribute getOrderAttribute()
+	public int getOrderAttrIndex()
 	{
-		return attributes[orderAttribute.getSelectedIndex()];
+		return orderAttribute.getSelectedIndex();
 	}
 }

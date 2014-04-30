@@ -92,7 +92,7 @@ public class ConfigDialog extends JDialog
 				config.setUserAttributes(axisPanel.getUserAttributes());
 				config.setMovieAttributes(axisPanel.getMovieAttributes());
 				config.setOrderASC(orderPanel.isOrderASC());
-				config.setSortingAttribute(orderPanel.getOrderAttribute());
+				config.setSortingAttrIndex(orderPanel.getOrderAttrIndex());
 				//config.setOrderAttribute(orderPanel.getOrderAttribute());
 				//config.setFilter(filterPanel.getFilter());
 				setVisible(false);

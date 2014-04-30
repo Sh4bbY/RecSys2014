@@ -11,7 +11,7 @@ import charting.attributes.XAxis;
 public class ChartConfiguration
 {
 	private boolean isOrderASC;
-	private Attribute sortingAttribute;
+	private int sortingAttributeIndex;
 	private ArrayList<RatingAttr> ratingAttributes;
 	private ArrayList<UserAttr> userAttributes;
 	private ArrayList<MovieAttr> movieAttributes;
@@ -21,7 +21,7 @@ public class ChartConfiguration
 	{
 		xAxis = XAxis.Rating;
 		isOrderASC = true;
-		sortingAttribute = RatingAttr.Engagement;
+		sortingAttributeIndex = 0;
 		ratingAttributes = new ArrayList<RatingAttr>();
 		ratingAttributes.add(RatingAttr.Engagement);
 	}
@@ -37,15 +37,15 @@ public class ChartConfiguration
 	}
 	
 	
-	public Attribute getSortingAttribute()
+	public int getSortingAttrIndex()
 	{
-		return sortingAttribute;
+		return sortingAttributeIndex;
 	}
 
 	
-	public void setSortingAttribute(Attribute attr)
+	public void setSortingAttrIndex(int attrIdx)
 	{
-		sortingAttribute = attr;
+		sortingAttributeIndex = attrIdx;
 	}
 	
 	public boolean isSortingASC()
