@@ -3,6 +3,7 @@ package charting;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JPanel;
 
@@ -19,20 +20,15 @@ import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-public class DataChart extends JPanel
+import charting.attributes.Attribute;
+
+public class DataChartFactory extends JPanel
 {
-	private static final long	serialVersionUID	= 1L;
-	
-	private XYPlot plot;
-	
-	private XYSeries[] series;
-	
-	private XYSeriesCollection dataset;
+	private static final long	serialVersionUID	= 1L;	
 	private XYDotRenderer dotRenderer;
 	   
-    public DataChart() 
+    public DataChartFactory() 
     {    	
-    	dataset = new XYSeriesCollection();
     	dotRenderer = new XYDotRenderer();
     	
     	initialize();
@@ -44,41 +40,14 @@ public class DataChart extends JPanel
     	dotRenderer.setDotWidth(1);	
     }
     
-    public void setSeries(String[] seriesNames)
+    public ChartPanel createChart(DataStructure data, ChartConfiguration config)
     {
-    	series = new XYSeries[seriesNames.length];
-    	for(int i=0; i < seriesNames.length; i++)
-    	{
-    		series[i] = new XYSeries(seriesNames[i]);
-    	}
-    }
-    
-    
-    
-    public void setData(DataStructure data, ChartConfiguration config)
-    {
-    	/*
-    	for(XYSeries series : this.series)
-    	{
-    		String name = (String)series.getKey();
-    		
-    		if(name.equals("rating") && rating.getValue(name) > 10 || rating.getValue(name) < 0)
-    		{
-    			continue;
-    		}
-    		
-    		series.add(x, rating.getValue(name));
-    	}
-    	*/
-    }
-    
-    public ChartPanel createChart()
-    {
-    	dataset.removeAllSeries();
+    	XYSeries[] series 			= data.getSeries(config);
+    	XYSeriesCollection dataset 	= new XYSeriesCollection();
     	
-    	for(XYSeries series : this.series)
+    	for(XYSeries serie : series)
     	{
-    		dataset.addSeries(series);
+    		dataset.addSeries(serie);
     	}
     	
     	final JFreeChart chart = ChartFactory.createXYLineChart(
@@ -92,7 +61,7 @@ public class DataChart extends JPanel
                 false
             );
 
-    	plot = chart.getXYPlot();
+    	XYPlot plot = chart.getXYPlot();
     	
         final NumberAxis domainAxis = new NumberAxis("tweet");
         final NumberAxis rangeAxis = new NumberAxis("value");

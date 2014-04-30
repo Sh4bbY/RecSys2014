@@ -16,7 +16,7 @@ public class DataManager
 		return userMap;
 	}
 	
-	public DataStructure readData(String fileName)
+	public DataStructure readData(File file)
 	{
 		DataStructure dataStructure = new DataStructure();
 		
@@ -25,7 +25,7 @@ public class DataManager
 		
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(fileName));
+			BufferedReader br = new BufferedReader(new FileReader(file.getAbsolutePath()));
 	        String line;
 	        
 	        while((line = br.readLine()) != null) 

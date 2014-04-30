@@ -1,6 +1,10 @@
 package model;
 
 import java.io.Serializable;
+
+import main.Analysis;
+import charting.attributes.RatingAttr;
+
 import com.google.gson.Gson;
 
 public class Rating implements Serializable
@@ -85,23 +89,23 @@ public class Rating implements Serializable
 		long created =  tweet.getCreatedAt().getTime()/1000;
 		int days = (int)(scrapingTime - created) / (60*60*24);
 		
-		return days; 
+		return days;
 	}
 	
-	public Integer getValue(String key)
+	public Integer getValue(RatingAttr attr)
 	{
-		switch(key)
+		switch(attr)
 		{
-			case "engagement": 		return tweet.getRetweetCount() + tweet.getFavoriteCount();
-			case "retweet_count": 	return tweet.getRetweetCount();
-			case "favourite_count": return tweet.getFavoriteCount();
-			case "rating": 			return rating;
-			case "friends_count": 	return tweet.getUser().getFriendsCount();
-			case "followers_count": return tweet.getUser().getFollowersCount();
-			case "online_time": 	return getOnlineTime();
+			case Engagement: 	return tweet.getRetweetCount() + tweet.getFavoriteCount();
+			case RetweetCount: 	return tweet.getRetweetCount();
+			case FavoriteCount: return tweet.getFavoriteCount();
+			case Rating: 		return rating;
+			case FriendCount: 	return tweet.getUser().getFriendsCount();
+			case FollowerCount: return tweet.getUser().getFollowersCount();
+			case OnlineTime: 	return getOnlineTime();
 		}
 		
-		System.out.println("key not found");
+		Analysis.logger.warn("Attribute not found");
 		
 		return 0;
 	}

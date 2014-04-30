@@ -3,28 +3,22 @@ package view;
 import helper.Statics;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
 
 import main.Analysis;
 
@@ -32,30 +26,30 @@ import org.jfree.chart.ChartPanel;
 
 public class AnalizeFrame extends JFrame
 {
-	private static final long	serialVersionUID	= 1L;
+	private static final long	serialVersionUID = 1L;
 
 	private final String windowTitle = "Chart Frame"; 
+	private final String loadFilePath = "/assets/test.dat";
 	private final int width = 800, height = 500;
-	private List<Integer> seriesSelections;
+	
 	private ActionListener loadDataBtnListener, printBtnListener, configDataBtnListener;
-	private MouseAdapter listClickListener;
 	private JTabbedPane chartTabs;
 	private Analysis analysis;
-	private ChartPanel currentChart;
+	private ArrayList<ChartPanel> chartPanels;
 	
 	private JScrollPane logPane;
 	private JTextArea logArea;
 	private JPanel controlPanel;
 	private JButton loadDataButton, configDataButton, printDataButton;
-	private JList<String> seriesList;
+	private JFileChooser fileChooser;
 	
 	private ConfigDialog configDialog;
 	
 	public AnalizeFrame(Analysis analysis)
 	{
 		this.analysis = analysis;
-		
-		seriesSelections = new ArrayList<Integer>();
+		this.chartPanels = new ArrayList<ChartPanel>();
+		this.fileChooser = new JFileChooser(new File("").getAbsolutePath() + loadFilePath);
 		
 		createListeners();
 		initialize();
@@ -78,18 +72,7 @@ public class AnalizeFrame extends JFrame
 	{		
 		controlPanel = new JPanel();
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-		
-		DefaultListModel<String> seriesModel = new DefaultListModel<String>();
-		for(String name : Analysis.ATTRIBUTES)
-		{
-			seriesModel.addElement(name);
-		}
-		seriesList = new JList<String>(seriesModel);
-		seriesList.setAlignmentX(Component.LEFT_ALIGNMENT);
-		seriesList.addMouseListener(listClickListener);
-		seriesList.setCellRenderer(new SeriesListCellRenderer(seriesSelections));
-		seriesList.setVisible(false);
-
+				
 		loadDataButton = new JButton("Load Data");
 		loadDataButton.addActionListener(loadDataBtnListener);
 		loadDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -104,7 +87,7 @@ public class AnalizeFrame extends JFrame
 		printDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 		printDataButton.setVisible(false);
 		
-		configDialog = new ConfigDialog(analysis);
+		configDialog = new ConfigDialog(analysis.getConfig());
 		
 		logArea = new JTextArea();
 		logArea.setEditable(false);
@@ -113,9 +96,6 @@ public class AnalizeFrame extends JFrame
 		logPane.setPreferredSize(new Dimension (width, 50));
 
 		chartTabs = new JTabbedPane();
-				
-		//logPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		//logPane.setSize(width, 100);
 	}
 	
 	private void createListeners()
@@ -125,17 +105,13 @@ public class AnalizeFrame extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				String s = (String)JOptionPane.showInputDialog("FileName:","/assets/training.dat");
-				
-				if(s == null)
+				//String s = (String)JOptionPane.showInputDialog("FileName:",loadFilePath);
+				int fcResult = fileChooser.showOpenDialog((JButton)e.getSource());
+				if(fcResult == JFileChooser.APPROVE_OPTION)
 				{
-					return;
+					analysis.readData(fileChooser.getSelectedFile());
+					printDataButton.setVisible(true);
 				}
-
-				analysis.readData(s);
-				printDataButton.setVisible(true);
-				configDataButton.setVisible(false);
-				seriesList.setVisible(true);
 			}		
 		};
 		
@@ -153,51 +129,14 @@ public class AnalizeFrame extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				int seriesAmount = seriesSelections.size();
-				String[] series = new String[seriesAmount];
-				for(int i =0; i<seriesAmount; i++)
-				{
-					series[i] = Analysis.ATTRIBUTES[seriesSelections.get(i)];
-				}
 				analysis.drawChart();
 			}		
-		};
-		
-		listClickListener = new MouseAdapter()
-		{
-			@Override
-			public void mouseClicked(MouseEvent evt) 
-			{
-		        @SuppressWarnings("unchecked")
-				JList<String> list = (JList<String>)evt.getSource();
-		        int selectionIndex = -1;
-		        int listIndex;
-		        
-		        if (evt.getClickCount() == 2) 
-		        {
-		        	selectionIndex = list.locationToIndex(evt.getPoint());
-		        	listIndex = seriesSelections.indexOf(selectionIndex);
-		            
-		            if(listIndex != -1)
-		            {
-		            	seriesSelections.remove(listIndex);
-		            }
-		            else
-		            {
-		            	seriesSelections.add(selectionIndex);
-		            }
-			        list.repaint();
-		        }
-		        
-		    }
-		};
-		
+		};		
 	}
 	
 	private void attachElements()
 	{
 		controlPanel.add(loadDataButton);
-		controlPanel.add(seriesList);
 		controlPanel.add(configDataButton);
 		controlPanel.add(printDataButton);
 		
@@ -209,12 +148,8 @@ public class AnalizeFrame extends JFrame
 	
 	public void addChart(ChartPanel cPanel)
 	{
-		if(currentChart != null)
-		{
-			chartTabs.remove(currentChart);
-		}
-		
+		cPanel.setName("Chart #"+(chartPanels.size()+1));
+		chartPanels.add(cPanel);
 		chartTabs.add(cPanel);
-		currentChart = cPanel;
 	}
 }

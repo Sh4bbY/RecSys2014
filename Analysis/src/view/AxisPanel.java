@@ -1,8 +1,8 @@
 package view;
 
-import java.awt.Checkbox;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 
-import charting.ChartConfiguration;
 import charting.attributes.Attribute;
 import charting.attributes.MovieAttr;
 import charting.attributes.RatingAttr;
@@ -22,7 +21,6 @@ import charting.attributes.XAxis;
 public class AxisPanel extends JPanel
 {
 	private static final long	serialVersionUID	= 1L;
-	private final String RATING = "Rating", USER = "User", MOVIE = "Movie"; 
 	
 	private JRadioButton[] xAttributes;
 	private JCheckBox[][] yAttributes;
@@ -53,13 +51,23 @@ public class AxisPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				String btnText = ((JRadioButton)e.getSource()).getText();	
+				String btnText = ((JRadioButton)e.getSource()).getText();
+				XAxis selection = null;
 				
-				switch(btnText)
+				for(XAxis tmp : XAxis.values())
 				{
-					case RATING:	showAttributePanel(0); break;
-					case USER:		showAttributePanel(1); break;
-					case MOVIE:		showAttributePanel(2); break;
+					if(btnText.equals(tmp.toString()))
+					{
+						selection = tmp;
+						break;
+					}
+				}				
+				
+				switch(selection)
+				{
+					case Rating:	showAttributePanel(0); break;
+					case User:		showAttributePanel(1); break;
+					case Movie:		showAttributePanel(2); break;
 				}
 			}
 		};
@@ -120,7 +128,64 @@ public class AxisPanel extends JPanel
 		}
 	}
 	
-	public 
+	public XAxis getXAxis()
+	{
+		for(int i=0; i<xAttributes.length; i++)
+		{
+			if(xAttributes[i].isSelected())
+			{
+				return XAxis.values()[i];
+			}
+		}
+		
+		return null;
+	}
+	
+	public ArrayList<RatingAttr> getRatingAttributes()
+	{
+		ArrayList<RatingAttr> attributes = new ArrayList<RatingAttr>();
+
+		for(int o=0; o<yAttributes[0].length; o++)
+		{
+			if(yAttributes[0][o].isSelected())
+			{
+				attributes.add(RatingAttr.values()[o]);
+			}
+		}
+		
+		return attributes;
+	}
+	
+	public ArrayList<UserAttr> getUserAttributes()
+	{
+		ArrayList<UserAttr> attributes = new ArrayList<UserAttr>();
+
+		for(int o=0; o<yAttributes[1].length; o++)
+		{
+			if(yAttributes[1][o].isSelected())
+			{
+				attributes.add(UserAttr.values()[o]);
+			}
+		}
+		
+		return attributes;
+	}
+	
+	public ArrayList<MovieAttr> getMovieAttributes()
+	{
+		ArrayList<MovieAttr> attributes = new ArrayList<MovieAttr>();
+
+		for(int o=0; o<yAttributes[2].length; o++)
+		{
+			if(yAttributes[2][o].isSelected())
+			{
+				attributes.add(MovieAttr.values()[o]);
+			}
+		}
+		
+		return attributes;
+	}
+	
 	
 	private void attachElements()
 	{

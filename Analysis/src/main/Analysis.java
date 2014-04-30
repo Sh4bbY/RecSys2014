@@ -4,7 +4,7 @@ import helper.DataManager;
 
 import java.io.File;
 
-import charting.DataChart;
+import charting.DataChartFactory;
 import charting.ChartConfiguration;
 import view.AnalizeFrame;
 import model.DataStructure;
@@ -15,14 +15,12 @@ import org.apache.logging.log4j.LogManager;
 
 public class Analysis
 {	
-	public static final String[] ATTRIBUTES = {"engagement","retweet_count","favourite_count","rating","online_time", "friends_count", "followers_count"};
-	
 	private DataManager dataManager;
 	private DataStructure dataStructure;
 	private ChartConfiguration config;
+	private DataChartFactory chartFacotry;
 	
 	private AnalizeFrame frame;
-	private DataChart chart;
 	public static final Logger logger = LogManager.getLogger(Analysis.class.getName());
 	
 	public static void main(String[] args)
@@ -33,25 +31,27 @@ public class Analysis
 	
 	public Analysis()
 	{
-		frame 			= new AnalizeFrame(this);
+        config			= new ChartConfiguration();
 		dataManager 	= new DataManager();
-        chart			= new DataChart();
+		frame 			= new AnalizeFrame(this);
+		chartFacotry 	= new DataChartFactory();
 	}
 	
 
-	public void readData(String fileName)
+	public void readData(File file)
 	{	
-		String fileLocation = new File("").getAbsolutePath() + fileName;
-
-		logger.info("read data: "+fileLocation);
+		logger.info("read data: "+file.getName());
 		
-		dataStructure = dataManager.readData(fileLocation);
+		dataStructure = dataManager.readData(file);
 	}
 	
 	public void drawChart()
 	{
-		chart.setData(dataStructure, config);
-		
-        frame.addChart(chart.createChart());
+        frame.addChart(chartFacotry.createChart(dataStructure,config));
+	}
+	
+	public ChartConfiguration getConfig()
+	{
+		return config;
 	}
 }
