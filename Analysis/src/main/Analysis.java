@@ -3,11 +3,13 @@ package main;
 import helper.DataManager;
 
 import java.io.File;
+import java.util.HashMap;
 
 import charting.DataChartFactory;
 import charting.ChartConfiguration;
 import view.AnalizeFrame;
 import model.DataStructure;
+import model.ImdbData;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +45,9 @@ public class Analysis
 		logger.info("read data: "+file.getName());
 		
 		dataStructure = dataManager.readData(file);
+		
+		String imdbDataPath = new File("").getAbsolutePath()+"/imdbData.dat";
+		dataStructure.setImdbData((HashMap<String, ImdbData>)DataManager.loadFromFile(imdbDataPath));
 	}
 	
 	public void drawChart()

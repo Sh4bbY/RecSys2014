@@ -7,6 +7,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -14,7 +16,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -42,6 +43,7 @@ public class AnalizeFrame extends JFrame
 	private JPanel controlPanel;
 	private JButton loadDataButton, configDataButton, printDataButton;
 	private JFileChooser fileChooser;
+	private MouseAdapter tabListener;
 	
 	private ConfigDialog configDialog;
 	
@@ -96,6 +98,7 @@ public class AnalizeFrame extends JFrame
 		logPane.setPreferredSize(new Dimension (width, 50));
 
 		chartTabs = new JTabbedPane();
+		chartTabs.addMouseListener(tabListener);
 	}
 	
 	private void createListeners()
@@ -132,6 +135,20 @@ public class AnalizeFrame extends JFrame
 				analysis.drawChart();
 			}		
 		};		
+		
+		tabListener = new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent e) 
+		    {		      
+		        if (e.getClickCount() == 2) 
+		        {
+			    	int index = chartTabs.indexAtLocation(e.getX(), e.getY());
+			    	
+			    	chartTabs.remove(index);
+			    	chartPanels.remove(index);
+		        }
+		    }
+		};
 	}
 	
 	private void attachElements()

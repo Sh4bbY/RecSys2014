@@ -1,29 +1,23 @@
 package charting;
 
-import java.util.ArrayList;
-
-import charting.attributes.Attribute;
-import charting.attributes.MovieAttr;
-import charting.attributes.RatingAttr;
-import charting.attributes.UserAttr;
 import charting.attributes.XAxis;
 
 public class ChartConfiguration
-{
+{	
 	private boolean isOrderASC;
 	private int sortingAttributeIndex;
-	private ArrayList<RatingAttr> ratingAttributes;
-	private ArrayList<UserAttr> userAttributes;
-	private ArrayList<MovieAttr> movieAttributes;
+	private int[][] selectedAttributes;
+	
+	
 	private XAxis xAxis;
+	private ChartFilter[] chartFilters;
 	
 	public ChartConfiguration()
 	{
 		xAxis = XAxis.Rating;
 		isOrderASC = true;
 		sortingAttributeIndex = 0;
-		ratingAttributes = new ArrayList<RatingAttr>();
-		ratingAttributes.add(RatingAttr.Engagement);
+		selectedAttributes = new int[3][];
 	}
 	
 	public void setXAxis(XAxis xAxis)
@@ -58,35 +52,48 @@ public class ChartConfiguration
 		 this.isOrderASC = isOrderASC;
 	}
 	
-	public void setAttributes()
+	public void setFilters(ChartFilter[] chartFilters)
 	{
-		
+		this.chartFilters = chartFilters;
 	}
 	
-	public Attribute[] getAttributes()
+	public void setSelectedAttributes(int[][] selectedAttributes)
 	{
-		switch(xAxis)
+		this.selectedAttributes = selectedAttributes;
+	}
+
+	public int[] getSelectedAttributes()
+	{
+		XAxis[] axis = XAxis.values();
+		
+		for(int i=0;i<axis.length;i++)
 		{
-			case Rating: 	return ratingAttributes.toArray(new Attribute[ratingAttributes.size()]);							
-			case User: 		return userAttributes.toArray(new Attribute[userAttributes.size()]);							
-			case Movie: 	return movieAttributes.toArray(new Attribute[movieAttributes.size()]);
+			if(axis[i].equals(xAxis))
+			{
+				return selectedAttributes[i];
+			}
 		}
 		
 		return null;
 	}
-
-	public void setRatingAttributes(ArrayList<RatingAttr> ratingAttributes)
+	
+	public boolean checkFilter(double value, int attrIndex)
 	{
-		this.ratingAttributes = ratingAttributes;
-	}
-
-	public void setUserAttributes(ArrayList<UserAttr> userAttributes)
-	{
-		this.userAttributes = userAttributes;
-	}
-
-	public void setMovieAttributes(ArrayList<MovieAttr> movieAttributes)
-	{
-		this.movieAttributes = movieAttributes;
+		for(ChartFilter filter : chartFilters)
+		{
+			if(attrIndex == filter.getAttrIndex())
+			{
+				switch(filter.getOperator())
+				{
+					case ChartFilter.LT: 	if(!(value < filter.getValue())) return true; break;
+					case ChartFilter.LTE: 	if(!(value <= filter.getValue())) return true; break;
+					case ChartFilter.E: 	if(!(value == filter.getValue())) return true; break;
+					case ChartFilter.GTE: 	if(!(value >= filter.getValue())) return true; break;
+					case ChartFilter.GT: 	if(!(value > filter.getValue())) return true; break;
+				}
+			}
+		}
+		
+		return false;
 	}
 }

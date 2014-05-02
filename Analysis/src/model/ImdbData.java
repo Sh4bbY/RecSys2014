@@ -29,6 +29,7 @@ public class ImdbData implements Serializable
 	{
 		this.rating = rating;
 	}
+	
 	public void setYear(int year)
 	{
 		this.year = year;

@@ -11,7 +11,6 @@ import helper.Statics;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -45,6 +44,10 @@ public class ConfigDialog extends JDialog
 		initialize();
 		createElements();
 		attachElements();
+		
+
+		axisPanel.selectXAxis(XAxis.Rating);
+		okBtn.doClick();
 	}
 	
 	private void initialize()
@@ -88,13 +91,10 @@ public class ConfigDialog extends JDialog
 			public void actionPerformed(ActionEvent e)
 			{
 				config.setXAxis(axisPanel.getXAxis());
-				config.setRatingAttributes(axisPanel.getRatingAttributes());
-				config.setUserAttributes(axisPanel.getUserAttributes());
-				config.setMovieAttributes(axisPanel.getMovieAttributes());
+				config.setSelectedAttributes(axisPanel.getSelectedAttributes());
 				config.setOrderASC(orderPanel.isOrderASC());
 				config.setSortingAttrIndex(orderPanel.getOrderAttrIndex());
-				//config.setOrderAttribute(orderPanel.getOrderAttribute());
-				//config.setFilter(filterPanel.getFilter());
+				config.setFilters(filterPanel.getFilters());
 				setVisible(false);
 			}		
 		};
@@ -155,4 +155,5 @@ public class ConfigDialog extends JDialog
 		
 		jc.setMaximumSize(max); 
 	}
+	
 }

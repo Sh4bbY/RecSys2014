@@ -3,26 +3,26 @@ package model;
 import helper.QuickSort;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+
+import main.Analysis;
 
 import org.jfree.data.xy.XYSeries;
 
 import charting.ChartConfiguration;
 import charting.attributes.Attribute;
+import charting.attributes.MovieAttr;
 import charting.attributes.RatingAttr;
 import charting.attributes.UserAttr;
-import charting.attributes.XAxis;
-import main.Analysis;
 
 public class DataStructure
 {
 	private ArrayList<Rating> ratings;
     private HashMap<String,ArrayList<Rating>> users, movies;
+    private HashMap<String, ImdbData> imdbData;
     
     public DataStructure()
     {
@@ -40,75 +40,161 @@ public class DataStructure
     
 	public XYSeries[] getSeries(ChartConfiguration config)
 	{
-		Attribute[] attributes = config.getAttributes();
-		XYSeries[] series = new XYSeries[attributes.length];
+		int[] attributeIndices = config.getSelectedAttributes();
+		Attribute[] attributes = null;
+		
+		switch(config.getXAxis())
+		{
+			case Rating:	attributes = RatingAttr.values();break;
+			case User:		attributes = UserAttr.values();break;
+			case Movie:		attributes = MovieAttr.values();break;
+		}
+		
+		XYSeries[] series = new XYSeries[attributeIndices.length];
 		QuickSort qSort = new QuickSort();
 		
-		double[][] values = getValues(config);
+		List<double[]> values = getValues(config);
 		
-		qSort.sort(values, config.getSortingAttrIndex(), config.isSortingASC());
+		double[][] valuesArr = new double[values.size()][attributeIndices.length];
 		
-		for(int i=0; i<attributes.length; i++)
+		qSort.sort(values.toArray(valuesArr), config.getSortingAttrIndex(), config.isSortingASC());
+		
+		
+		
+		for(int i=0; i<attributeIndices.length; i++)
 		{
-			series[i] = new XYSeries(attributes[i].toString());
-			
-			for(int o=0;o<values[0].length; o++)
+			series[i] = new XYSeries(attributes[attributeIndices[i]].toString());
+		}
+		
+		for(int i=0;i<valuesArr.length;i++)
+		{
+			for(int o=0;o<attributeIndices.length; o++)
 			{
-				series[i].add(o,values[i][o]);
+				series[o].add(i, valuesArr[i][o]);
 			}
 		}
+
+		Analysis.logger.info(values.size() + " Elements to plot (after filtering)");
 		
 		return series;
 	}
 	
-	private double[][] getValues(ChartConfiguration config)
+	private List<double[]> getValues(ChartConfiguration config)
 	{
-		Attribute[] attributes = config.getAttributes();
-		double[][] values = null;
+		int[] attributeIndices = config.getSelectedAttributes();
+		List<double[]> values = new ArrayList<double[]>();
 		ArrayList<Rating> tmp;
 		Iterator<String> iterator;
 		Rating rating;
-		int idx;
+		int attrIndex;
+		double value;
+		double[] valueArr;
+		boolean filtered;
 		
 		switch(config.getXAxis())
 		{
-			case Rating:		
-				values = new double[attributes.length][ratings.size()];
+			case Rating:
+				
+				RatingAttr[] ratingAttributes = RatingAttr.values();
+				Float tmpFloat;
+				
 				for(int i=0; i < ratings.size(); i++)
 				{
+					filtered = false;
 					rating = ratings.get(i);
+					valueArr = new double[attributeIndices.length];
 					
-					for(int o=0;o<attributes.length;o++)
+					for(int o=0;o<attributeIndices.length;o++)
 					{
-						values[o][i] = rating.getValue((RatingAttr)attributes[o]);
+						attrIndex = attributeIndices[o];
+						switch(ratingAttributes[attrIndex])
+						{
+							case ImdbRating: 		tmpFloat = imdbData.get(rating.getImdbId()).getRating();
+													value = (tmpFloat == null)?0:new Double(tmpFloat);
+													break;
+													
+							case RatingDifference: 	tmpFloat = imdbData.get(rating.getImdbId()).getRating();
+													value = (tmpFloat == null)?0:tmpFloat - rating.getValue(RatingAttr.Rating);
+													break;
+													
+							default: 				value = rating.getValue(ratingAttributes[attrIndex]);break;
+						}
+						valueArr[o] = value;
+
+						if(config.checkFilter(value, attrIndex))
+						{
+							filtered = true;
+						}					
 					}
+					
+					if(!filtered)
+					{
+						values.add(valueArr);
+					}				
 				}
 				break;
 				
 			case User:
-				values = new double[attributes.length][users.size()];
+
+				UserAttr[] userAttributes = UserAttr.values();
 				iterator = users.keySet().iterator();
-				idx = 0;
+				
 				while(iterator.hasNext())
 				{
+					filtered = false;
 					tmp = users.get(iterator.next());
+					valueArr = new double[attributeIndices.length];
 					
-					for(int o=0;o<attributes.length;o++)
+					for(int o=0;o<attributeIndices.length;o++)
 					{
-						values[o][idx] = getUserValue(tmp,(UserAttr)attributes[o]);
+						attrIndex = attributeIndices[o];
+						value = getUserValue(tmp,userAttributes[attrIndex]);
+						valueArr[o] = value;
+
+						if(config.checkFilter(value, attrIndex))
+						{
+							filtered = true;
+						}
 					}
 					
-					idx++;
+					if(!filtered)
+					{
+						values.add(valueArr);
+					}
 				}
 				break;
+				
 			case Movie:
-				for(int i=0; i < ratings.size(); i++)
+
+				MovieAttr[] movieAttributes = MovieAttr.values();
+				iterator = movies.keySet().iterator();
+				String imdbID;
+				
+				while(iterator.hasNext())
 				{
-					for(Attribute attr : attributes)
+					filtered = false;
+					imdbID = iterator.next();
+					tmp = movies.get(imdbID);
+					valueArr = new double[attributeIndices.length];
+					
+					for(int o=0;o<attributeIndices.length;o++)
 					{
-						//series[i].add(i,ratings.get(i).getValue((RatingAttr)attr));
+						attrIndex = attributeIndices[o];
+						value = getMovieValue(tmp,movieAttributes[attrIndex],imdbID);
+						valueArr[o] = value;
+
+						if(config.checkFilter(value, attrIndex))
+						{
+							filtered = true;
+						}
+					}
+					
+					if(!filtered)
+					{
+						values.add(valueArr);
 					}
 				}
+				break;
 		}
 		
 		return values;
@@ -129,6 +215,39 @@ public class DataStructure
 									}
 									break;
 									
+		}
+		
+		return value;
+	}
+	
+	private double getMovieValue(ArrayList<Rating> ratings, MovieAttr attr, String imdbID)
+	{
+		Double value = new Double(0);
+		Integer tmpInteger;
+		Float tmpFloat;
+		
+		switch(attr)
+		{
+			case AmountOfTweets: 	value = new Double(ratings.size());
+									break;
+									
+			case Engagement:		for(Rating rating : ratings)
+									{
+										value += rating.getValue(RatingAttr.Engagement);
+									}
+									break;
+
+			case Year:				tmpInteger = imdbData.get(imdbID).getYear();
+									value = (tmpInteger == null)?new Double(-5):new Double(tmpInteger);
+									break;
+
+			case RatingCount:		tmpInteger = imdbData.get(imdbID).getRatingCount();
+									value = (tmpInteger == null)?new Double(-5):new Double(tmpInteger);
+									break;
+
+			case ImdbRating:		tmpFloat = imdbData.get(imdbID).getRating();
+									value = (tmpFloat == null)?new Double(-5):new Double(tmpFloat);
+									break;									
 		}
 		
 		return value;
@@ -164,13 +283,23 @@ public class DataStructure
     	{
     		ArrayList<Rating> movieRatings = new ArrayList<Rating>();
     		movieRatings.add(rating);
-        	users.put(rating.getImdbId(), movieRatings);
+        	movies.put(rating.getImdbId(), movieRatings);
     	}
+    }
+    
+    public Set<String> getImdbIds()
+    {
+    	return movies.keySet();
     }
     
     @Override
     public String toString()
     {
-    	return "Rating Entries: "+ratings.size()+" User Entries: "+users.size()+"Movie Entries: "+movies.size();
+    	return "Rating Entries: "+ratings.size()+"   User Entries: "+users.size()+"   Movie Entries: "+movies.size();
     }
+
+	public void setImdbData(HashMap<String, ImdbData> imdbData)
+	{
+		this.imdbData = imdbData;
+	}
 }
