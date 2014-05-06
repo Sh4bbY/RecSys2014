@@ -1,0 +1,14 @@
+\begin{thebibliography}{HdOG08}
+
+\bibitem[.]{.}
+Introduction to recommender systems - algorithms and evaluation.
+
+\bibitem[.b]{.b}
+Recommendation systems handbook.
+
+\bibitem[HdOG08]{HernandezdelOlmo.2008}
+F{\'e}lix Hern{\'a}ndez~del Olmo and Elena Gaudioso.
+\newblock Evaluation of recommender systems: A new approach.
+\newblock {\em Expert Systems with Applications}, 35(3):790--804, 2008.
+
+\end{thebibliography}
