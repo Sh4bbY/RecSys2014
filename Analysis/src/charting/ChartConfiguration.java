@@ -1,9 +1,13 @@
 package charting;
 
+import java.io.Serializable;
+
 import charting.attributes.XAxis;
 
-public class ChartConfiguration
+public class ChartConfiguration implements Serializable
 {	
+	private static final long serialVersionUID = 1L;
+	
 	private boolean isOrderASC;
 	private int sortingAttributeIndex;
 	private int[][] selectedAttributes;
@@ -95,5 +99,10 @@ public class ChartConfiguration
 		}
 		
 		return false;
+	}
+	
+	public ChartFilter[] getFilters()
+	{
+		return chartFilters;
 	}
 }

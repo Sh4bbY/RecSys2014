@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import helper.DataManager;
 import helper.Statics;
 
 import javax.swing.BoxLayout;
@@ -46,7 +47,7 @@ public class ConfigDialog extends JDialog
 		attachElements();
 		
 
-		axisPanel.selectXAxis(XAxis.Rating);
+		axisPanel.setXAxis(XAxis.Rating);
 		okBtn.doClick();
 	}
 	
@@ -90,11 +91,7 @@ public class ConfigDialog extends JDialog
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				config.setXAxis(axisPanel.getXAxis());
-				config.setSelectedAttributes(axisPanel.getSelectedAttributes());
-				config.setOrderASC(orderPanel.isOrderASC());
-				config.setSortingAttrIndex(orderPanel.getOrderAttrIndex());
-				config.setFilters(filterPanel.getFilters());
+				applyConfig(config);
 				setVisible(false);
 			}		
 		};
@@ -113,7 +110,13 @@ public class ConfigDialog extends JDialog
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				fileChooser.showOpenDialog((JButton)e.getSource());
+				int result = fileChooser.showOpenDialog((JButton)e.getSource());
+				
+				if(result == JFileChooser.APPROVE_OPTION)
+				{
+					ChartConfiguration config = (ChartConfiguration)DataManager.loadFromFile(fileChooser.getSelectedFile().getAbsolutePath());
+					applyConfigToGUI(config);
+				}
 			}		
 		};
 		
@@ -122,7 +125,12 @@ public class ConfigDialog extends JDialog
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				fileChooser.showSaveDialog((JButton)e.getSource());
+				int result = fileChooser.showSaveDialog((JButton)e.getSource());
+				
+				if(result == JFileChooser.APPROVE_OPTION)
+				{
+					DataManager.storeToFile(fileChooser.getSelectedFile().getAbsolutePath(), applyConfig(new ChartConfiguration()));
+				}
 			}		
 		};
 	}
@@ -156,4 +164,22 @@ public class ConfigDialog extends JDialog
 		jc.setMaximumSize(max); 
 	}
 	
+	private ChartConfiguration applyConfig(ChartConfiguration config)
+	{
+		config.setXAxis(axisPanel.getXAxis());
+		config.setSelectedAttributes(axisPanel.getSelectedAttributes());
+		config.setOrderASC(orderPanel.isOrderASC());
+		config.setSortingAttrIndex(orderPanel.getOrderAttrIndex());
+		config.setFilters(filterPanel.getFilters());
+		return config;
+	}
+	
+	private void applyConfigToGUI(ChartConfiguration config)
+	{
+		axisPanel.setXAxis(config.getXAxis());
+		axisPanel.setSelectedAttributes(config.getSelectedAttributes());
+		orderPanel.setOrderASC(config.isSortingASC());
+		orderPanel.setOrderAttrIndex(config.getSortingAttrIndex());
+		filterPanel.setFilters(config.getFilters());
+	}
 }

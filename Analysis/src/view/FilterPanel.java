@@ -163,4 +163,19 @@ public class FilterPanel extends JPanel
 		
 		return chartFilters.get(currentXaxisIdx).toArray(filterArray);
 	}
+	
+	public void setFilters(ChartFilter[] filters)
+	{
+		chartFilters.get(currentXaxisIdx).clear();
+		listModel.clear();
+		
+		ChartFilter filter;
+		
+		for(int i=0;i<filters.length;i++)
+		{
+			filter = filters[i];
+			chartFilters.get(currentXaxisIdx).add(filter);
+			listModel.addElement(filterAttribute.getItemAt(filter.getAttrIndex())+" "+operator.getItemAt(filter.getOperator())+" "+filter.getValue());
+		}
+	}
 }

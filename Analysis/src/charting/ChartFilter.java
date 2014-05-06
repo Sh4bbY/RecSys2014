@@ -1,12 +1,16 @@
 package charting;
 
+import java.io.Serializable;
+
 import charting.attributes.Attribute;
 import charting.attributes.MovieAttr;
 import charting.attributes.RatingAttr;
 import charting.attributes.UserAttr;
 
-public class ChartFilter
+public class ChartFilter implements Serializable
 { 
+	private static final long serialVersionUID = 1L;
+
 	public static final int LT = 0, LTE = 1, E = 2, GTE = 3, GT = 4;
 	
 	private double value;

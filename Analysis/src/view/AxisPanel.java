@@ -44,7 +44,7 @@ public class AxisPanel extends JPanel
 		attachElements();
 	}
 	
-	public void selectXAxis(XAxis xAxis)
+	public void setXAxis(XAxis xAxis)
 	{
 		XAxis[] values = XAxis.values();
 		
@@ -239,6 +239,18 @@ public class AxisPanel extends JPanel
 		
 		return selectedAttributes;
 	}
+	
+	public void setSelectedAttributes(int[] attributes)
+	{	
+		int axisIndex = XAxis.getXAxisIndex(getXAxis());
+		
+		for(int i=0; i<attributes.length; i++)
+		{
+			yAttributes[axisIndex][attributes[i]].setSelected(true);
+		}		
+	}
+	
+		
 	
 	
 	private void attachElements()

@@ -75,9 +75,26 @@ public class OrderPanel extends JPanel
 	{
 		return ordering.getSelectedIndex() == 0;
 	}
+	
+	public void setOrderASC(boolean isASC)
+	{
+		if(isASC)
+		{
+			ordering.setSelectedIndex(0);
+		}
+		else
+		{
+			ordering.setSelectedIndex(1);
+		}
+	}
 
 	public int getOrderAttrIndex()
 	{
 		return orderAttribute.getSelectedIndex();
+	}
+	
+	public void setOrderAttrIndex(int index)
+	{
+		orderAttribute.setSelectedIndex(index);
 	}
 }

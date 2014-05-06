@@ -67,15 +67,25 @@ public class DataStructure
 			series[i] = new XYSeries(attributes[attributeIndices[i]].toString());
 		}
 		
+		float[] arithmeticMiddle = new float[attributeIndices.length];
+		
 		for(int i=0;i<valuesArr.length;i++)
 		{
 			for(int o=0;o<attributeIndices.length; o++)
 			{
+				arithmeticMiddle[o] += valuesArr[i][o];
 				series[o].add(i, valuesArr[i][o]);
 			}
 		}
 
 		Analysis.logger.info(values.size() + " Elements to plot (after filtering)");
+		Analysis.logger.info("----------");
+		
+		for(int i=0; i<attributeIndices.length; i++)
+		{
+			Analysis.logger.info("Arithmetic Middle of Attribute '"+attributes[attributeIndices[i]].toString()+"' = "+arithmeticMiddle[i]/valuesArr.length);
+		}
+		
 		
 		return series;
 	}

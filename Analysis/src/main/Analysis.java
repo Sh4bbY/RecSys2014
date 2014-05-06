@@ -48,6 +48,7 @@ public class Analysis
 		dataStructure = DataManager.readData(file);
 		
 		String imdbDataPath = new File("").getAbsolutePath()+"/imdbData.dat";
+		
 		dataStructure.setImdbData((HashMap<String, ImdbData>)DataManager.loadFromFile(imdbDataPath));
 	}
 	
