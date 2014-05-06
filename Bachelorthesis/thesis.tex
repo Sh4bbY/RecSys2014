@@ -1,0 +1,40 @@
+\documentclass[article,type=bsc,colorback,liststotoc,bibtotoc,accentcolor=tud9c]{tudthesis}
+\usepackage{ngerman}
+
+
+\begin{document}
+
+	\input{header}
+
+	\newpage
+	\include{kapitel/abstract}
+	
+	
+\pagestyle{headings}
+	
+	\pagenumbering{Roman}
+	\tableofcontents
+	
+	\newpage
+	
+	\listoffigures
+	\newpage
+	
+	\listoftables
+	\newpage
+	
+	\newcounter{seitenzahlroemisch}
+	\setcounter{seitenzahlroemisch}{\value{page}}
+	\pagenumbering{arabic}
+	
+	\include{kapitel/einleitung}
+
+
+	\pagenumbering{Roman}
+	\setcounter{page}{\value{seitenzahlroemisch}}
+	
+	\bibliography{Literatur}
+	\bibliographystyle{alpha}
+	\nocite{*}
+	
+\end{document}
