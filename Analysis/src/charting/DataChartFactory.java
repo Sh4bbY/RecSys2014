@@ -2,13 +2,10 @@ package charting;
 
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.JPanel;
 
 import model.DataStructure;
-import model.Rating;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -19,8 +16,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-
-import charting.attributes.Attribute;
 
 public class DataChartFactory extends JPanel
 {

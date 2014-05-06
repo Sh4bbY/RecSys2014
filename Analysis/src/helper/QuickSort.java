@@ -13,27 +13,27 @@ public class QuickSort
 		int i,j;
 		double pivot,tmp;
 		
-		stack.push(new Point(0,values[0].length-1));
+		stack.push(new Point(0, values.length - 1));
 		
 		while (!stack.isEmpty()) 
 		{
 			range = stack.pop();
 			i = range.x;
 			j = range.y;
-			pivot = values[sortIndex][j];
+			pivot = values[j][sortIndex];
 			
 			do 
 			{
-                while(isASC && values[sortIndex][i] < pivot || !isASC && values[sortIndex][i] > pivot) i++;
-                while(isASC && values[sortIndex][j] > pivot || !isASC && values[sortIndex][j] < pivot) j--;
+                while(isASC && values[i][sortIndex] < pivot || !isASC && values[i][sortIndex] > pivot) i++;
+                while(isASC && values[j][sortIndex] > pivot || !isASC && values[j][sortIndex] < pivot) j--;
                 
                 if(i <= j) 
                 {
-    				for(int o=0;o<values.length;o++)
+    				for(int o=0;o<values[0].length;o++)
     				{
-    					tmp = values[o][i];
-    					values[o][i] = values[o][j];
-    					values[o][j] = tmp;
+    					tmp = values[i][o];
+    					values[i][o] = values[j][o];
+    					values[j][o] = tmp;
     				}
                     i++;
                     j--;
@@ -50,7 +50,6 @@ public class QuickSort
             {
                 stack.push(new Point(i, range.y));  
             }
-			
 		}
 	}
 }

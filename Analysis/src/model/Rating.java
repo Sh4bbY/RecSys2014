@@ -92,7 +92,7 @@ public class Rating implements Serializable
 		return days;
 	}
 	
-	public Integer getValue(RatingAttr attr)
+	public double getValue(RatingAttr attr)
 	{
 		switch(attr)
 		{
@@ -103,11 +103,8 @@ public class Rating implements Serializable
 			case FriendCount: 	return tweet.getUser().getFriendsCount();
 			case FollowerCount: return tweet.getUser().getFollowersCount();
 			case OnlineTime: 	return getOnlineTime();
+			default:			Analysis.logger.warn("Attribute not found");return 0;
 		}
-		
-		Analysis.logger.warn("Attribute not found");
-		
-		return 0;
 	}
 	
 	@Override

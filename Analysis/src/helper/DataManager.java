@@ -1,6 +1,7 @@
 package helper;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 
 import main.Analysis;
@@ -97,7 +98,7 @@ public class DataManager
 		return new Rating(userId, itemId, rating, scraptingTime, jsonTweet);
 	}
 	
-	public static void storeToFile(String fileName, Object object)
+	synchronized public static void storeToFile(String fileName, Object object)
 	{
 		try
 		{  
@@ -109,9 +110,13 @@ public class DataManager
 	    	oos.close();
 	    	System.out.println("data stored to file '"+fileName+"'");
 	    }
-	    catch(Exception exc)
+		catch(ConcurrentModificationException ex)
+		{
+			System.err.println("ConcurrentModificationException on storing file: '"+fileName+"'");
+		}
+	    catch(Exception ex)
 	    {
-	    	exc.printStackTrace();
+	    	ex.printStackTrace();
 	    }
 	}
 	
@@ -132,10 +137,14 @@ public class DataManager
 	    	System.out.println("data loaded from file '"+fileName+"'");
 	    	return obj;
 	    }
-	    catch(Exception exc)
+		catch(EOFException ex)
+		{
+			System.err.println("couldn't load '"+fileName+"'. File is corrupt");
+		}
+	    catch(Exception ex)
 	    {
-	    	exc.printStackTrace();
-	    	return null;
+	    	ex.printStackTrace();
 	    }
+    	return null;
 	}
 }

@@ -4,7 +4,6 @@ package helper;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.text.MutableAttributeSet;
@@ -14,7 +13,6 @@ import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 import javax.swing.text.html.parser.ParserDelegator;
 
 import model.ImdbData;
-import model.Rating;
 
 public class ImdbExtractor implements Runnable
 {
@@ -23,19 +21,25 @@ public class ImdbExtractor implements Runnable
     private String valueKey = null;
     private HashMap<String,ImdbData> results;
     private ImdbData imdbData;
-    private ArrayList<Rating> ratings;
+    private String[] imdbIDs;
+    private int threadId;
     private int count;
+    private static Long time = null;
+    private int storeGap = 500;
+    private int storeAt;
     
-	public ImdbExtractor(int count, ArrayList<Rating> ratings, HashMap<String, ImdbData> results)
+	public ImdbExtractor(String[] imdbIDs, HashMap<String, ImdbData> results, int count, int threadId)
 	{		
-		this.count = count;
-		this.ratings = ratings;
+		this.imdbIDs = imdbIDs;
 		this.results = results;
 		this.valueKey = "";
+		this.count = count;
+		this.threadId = threadId;
+		this.storeAt = results.size() + storeGap;
 		
-		if(results == null)
+		if(time == null)
 		{
-			this.results = new HashMap<String, ImdbData>();
+			time = System.currentTimeMillis();
 		}
 	}
 
@@ -49,35 +53,34 @@ public class ImdbExtractor implements Runnable
         
 	public boolean startExtraction()
 	{		
-		String id = ratings.get(count).getImdbId();
+		String id = imdbIDs[count];
 		
-		if(results.containsKey(id))
+		if(results.size() >= imdbIDs.length)
 		{
+			if(this.threadId == 0)
+			{
+				DataManager.storeToFile("imdbData.dat", results);
+			}
+			return true;
+		}
+		
+		while(results.containsKey(id))
+		{
+			id = imdbIDs[count];
 			count++;
-	    	if(count < this.ratings.size() )
-	    	{
-				startExtraction();
-				return true;
-	    	}
-	    	else
-	    	{
-	    		DataManager.storeToFile("imdbData.dat", results);
-	    		System.out.println("------- Extracted Information: "+results.size());
-	    		return true;
-	    	}
 		}
 		
 		imdbData = new ImdbData(id);
-		InputStream in;
-        InputStreamReader reader;
+		InputStream is;
+        InputStreamReader isr;
         URL url;
         
 		try
 		{
 			url = new URL(baseUrl + id);
-			in = url.openStream();
-            reader = new InputStreamReader(in);
-            new ParserDelegator().parse(reader, new ExtractionCallback(imdbData), true);
+			is = url.openStream();
+            isr = new InputStreamReader(is);
+            new ParserDelegator().parse(isr, new ExtractionCallback(imdbData), true);
         }
         catch(Exception e)
         {
@@ -188,19 +191,25 @@ public class ImdbExtractor implements Runnable
 	        }
 		}
 	
-	    public synchronized void handleEndOfLineString(String eol) 
+		synchronized public void handleEndOfLineString(String eol) 
 	    {
 	    	results.put(imdbData.getId(), imdbData);
 
-    		count++;	
-
-	    	if(results.size() % 150 == 0)
+	    	if((results.size() > storeAt || results.size() == imdbIDs.length) && threadId == 0)
 	    	{
+	    		storeAt = results.size() + storeGap;
 	    		DataManager.storeToFile("imdbData.dat", results);
-	    		System.out.println("------- Extracted Information: "+results.size());
+	    		long currentTime = System.currentTimeMillis();
+	    		float seconds = (currentTime - ImdbExtractor.time) / 1000;
+	    		ImdbExtractor.time = currentTime;
+	    		
+	    		System.out.println("------- Thread["+threadId+"] -- Extracted Information: "+results.size()+"/"+imdbIDs.length+"   seconds needed = "+seconds);
 	    	}
-    		
-	    	startExtraction();
+	    	
+	    	if(results.size() < imdbIDs.length)
+	    	{
+		    	startExtraction();
+	    	}
 	    }
 	}
 
