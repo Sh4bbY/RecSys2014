@@ -18,7 +18,7 @@ Document=thesis.tex
 
 [Frame0_View0,0]
 TopLine=22
-Cursor=382
+Cursor=636
 
 [Frame1]
 Flags=0
@@ -36,7 +36,7 @@ Document=kapitel\einleitung.tex
 
 [Frame1_View0,0]
 TopLine=0
-Cursor=179
+Cursor=168
 
 [Frame2]
 Flags=0
@@ -71,10 +71,10 @@ Class=BibTeXView
 Document=Literatur.bib
 
 [Frame3_View0,0]
-TopLine=8
-Cursor=373
+TopLine=0
+Cursor=159
 
 [SessionInfo]
 FrameCount=4
-ActiveFrame=0
+ActiveFrame=3
 
