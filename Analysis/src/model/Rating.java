@@ -15,7 +15,7 @@ public class Rating implements Serializable
 	private Tweet tweet;
 	private int rating, scrapingTime;
 	private static Gson gson = new Gson();
-	private int predictedRetweets, predictedFavorites;
+	private float predictedRetweetCount, predictedFavoriteCount;
 	private ImdbData imdbData;
 
 	public Rating(String twitterUserId, String imdbMovieId, String rating, String scrapingTime, String jsonTweet)
@@ -74,9 +74,9 @@ public class Rating implements Serializable
 		return tweet;
 	}
 	
-	public String getResult()
+	public String getSolution()
 	{
-		return tweet.getUser().getId()+","+tweet.getTweetId()+","+predictedRetweets + predictedFavorites;
+		return tweet.getUser().getId()+","+tweet.getTweetId()+","+Math.round(predictedRetweetCount + predictedFavoriteCount);
 	}
 	
 	public String getTwitterUserId()
@@ -105,6 +105,26 @@ public class Rating implements Serializable
 			case OnlineTime: 	return getOnlineTime();
 			default:			Analysis.logger.warn("Attribute not found");return 0;
 		}
+	}
+	
+	public void setPredictedRetweetCount(float predictedRetweetCount)
+	{
+		this.predictedRetweetCount = predictedRetweetCount;
+	}
+	
+	public void setPredictedFavoriteCount(float predictedFavoriteCount)
+	{
+		this.predictedFavoriteCount = predictedFavoriteCount;
+	}
+	
+	public float getPredictedRetweetCount()
+	{
+		return predictedRetweetCount;
+	}
+	
+	public float getPredictedFavoriteCount()
+	{
+		return predictedFavoriteCount;
 	}
 	
 	@Override

@@ -33,7 +33,7 @@ public class AnalizeFrame extends JFrame
 	private final String loadFilePath = "/assets/test.dat";
 	private final int width = 800, height = 500;
 	
-	private ActionListener loadDataBtnListener, printBtnListener, configDataBtnListener;
+	private ActionListener loadDataBtnListener, printBtnListener, configDataBtnListener, createSolutionBtnListener, compareSolutionBtnListener;
 	private JTabbedPane chartTabs;
 	private Analysis analysis;
 	private ArrayList<ChartPanel> chartPanels;
@@ -41,7 +41,7 @@ public class AnalizeFrame extends JFrame
 	private JScrollPane logPane;
 	private JTextArea logArea;
 	private JPanel controlPanel;
-	private JButton loadDataButton, configDataButton, printDataButton;
+	private JButton loadDataButton, configDataButton, printDataButton, createSolutionButton, compareSolutionButton;
 	private JFileChooser fileChooser;
 	private MouseAdapter tabListener;
 	
@@ -77,17 +77,22 @@ public class AnalizeFrame extends JFrame
 				
 		loadDataButton = new JButton("Load Data");
 		loadDataButton.addActionListener(loadDataBtnListener);
-		loadDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		configDataButton = new JButton("Configuration");
 		configDataButton.addActionListener(configDataBtnListener);
-		configDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 		configDataButton.setVisible(true);
-		
+
 		printDataButton = new JButton("Print Chart");
 		printDataButton.addActionListener(printBtnListener);
-		printDataButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 		printDataButton.setVisible(false);
+		
+		createSolutionButton = new JButton("Create Solution");
+		createSolutionButton.addActionListener(createSolutionBtnListener);
+		createSolutionButton.setVisible(false);
+		
+		compareSolutionButton = new JButton("Compare Solution");
+		compareSolutionButton.addActionListener(compareSolutionBtnListener);
+		compareSolutionButton.setVisible(false);
 		
 		configDialog = new ConfigDialog(analysis.getConfig());
 		
@@ -114,6 +119,8 @@ public class AnalizeFrame extends JFrame
 				{
 					analysis.readData(fileChooser.getSelectedFile());
 					printDataButton.setVisible(true);
+					createSolutionButton.setVisible(true);
+					compareSolutionButton.setVisible(true);
 				}
 			}		
 		};
@@ -149,6 +156,24 @@ public class AnalizeFrame extends JFrame
 		        }
 		    }
 		};
+
+		createSolutionBtnListener = new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				analysis.createSolution();
+			}		
+		};		
+		
+		compareSolutionBtnListener = new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				analysis.compareSolution();
+			}		
+		};		
 	}
 	
 	private void attachElements()
@@ -156,6 +181,8 @@ public class AnalizeFrame extends JFrame
 		controlPanel.add(loadDataButton);
 		controlPanel.add(configDataButton);
 		controlPanel.add(printDataButton);
+		controlPanel.add(createSolutionButton);
+		controlPanel.add(compareSolutionButton);
 		
 		this.add(controlPanel, BorderLayout.EAST);
 

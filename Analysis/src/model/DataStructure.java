@@ -1,5 +1,6 @@
 package model;
 
+import helper.DataManager;
 import helper.QuickSort;
 
 import java.util.ArrayList;
@@ -301,5 +302,88 @@ public class DataStructure
 	public void setImdbData(HashMap<String, ImdbData> imdbData)
 	{
 		this.imdbData = imdbData;
+	}
+	
+	public void createSolution(String solutionFileName)
+	{
+		for(Rating rating : ratings)
+		{
+			rating.setPredictedFavoriteCount(Analysis.predictedFavorites(rating, users.get(rating.getTwitterUserId()), movies.get(rating.getImdbId())));
+			rating.setPredictedRetweetCount(Analysis.predictedRetweets(rating, users.get(rating.getTwitterUserId()), movies.get(rating.getImdbId())));
+		}
+		
+		DataManager.writeSolution(solutionFileName, ratings);
+	}
+
+	public void compareSolution()
+	{
+		int correctEngagement=0,correct0Engagement=0, correctFavorites=0, correct0Favorites=0, correctRetweets=0, correct0Retweets=0;
+		int amount0Favorites=0, amount0Retweets=0, amount0Engagement=0;
+		
+		for(Rating rating : ratings)
+		{
+			if(rating.getRetweetCount() + rating.getFavoriteCount() == Math.round(rating.getPredictedFavoriteCount() + rating.getPredictedRetweetCount()))
+			{
+				correctEngagement++;
+				
+				if(rating.getRetweetCount() + rating.getFavoriteCount() == 0)
+				{
+					correct0Engagement++;				
+				}
+			}
+			
+			if(rating.getFavoriteCount() == Math.round(rating.getPredictedFavoriteCount()))
+			{
+				correctFavorites++;
+				
+				if(rating.getFavoriteCount() == 0)
+				{
+					correct0Favorites++;				
+				}
+			}
+			
+			if(rating.getRetweetCount() == Math.round(rating.getPredictedRetweetCount()))
+			{
+				correctRetweets++;
+
+				if(rating.getRetweetCount() == 0)
+				{
+					correct0Retweets++;
+				}
+			}
+			
+			if(rating.getRetweetCount() == 0)
+			{
+				amount0Retweets++;
+				
+				if(rating.getFavoriteCount() == 0)
+				{
+					amount0Engagement++;
+				}
+			}
+			
+			if(rating.getFavoriteCount() == 0)
+			{
+				amount0Favorites++;				
+			}
+			
+		}
+		
+		Float percentage = new Float(new Float(correctEngagement*100)/ratings.size());
+		Analysis.logger.info("====================================");
+		Analysis.logger.info("Correct Engagement Predictions: "+correctEngagement+"/"+ratings.size() + "  ("+percentage+"%)");
+		Analysis.logger.info("Correct Engagement > 0 Predictions: "+(correctEngagement-correct0Engagement)+"/"+(ratings.size()-amount0Engagement));
+		Analysis.logger.info("Correct Engagement == 0 Predictions: "+correct0Engagement+"/"+amount0Engagement);
+		Analysis.logger.info("--------------");
+		percentage = new Float(new Float(correctFavorites*100)/ratings.size());
+		Analysis.logger.info("Correct FavoriteCount Predictions: "+correctFavorites+"/"+ratings.size() + "  ("+percentage+"%)");
+		Analysis.logger.info("Correct FavoriteCount > 0 Predictions: "+(correctFavorites-correct0Favorites)+"/"+(ratings.size()-amount0Favorites));
+		Analysis.logger.info("Correct FavoriteCount == 0 Predictions: "+correct0Favorites+"/"+amount0Favorites);
+		Analysis.logger.info("--------------");
+		percentage = new Float(new Float(correctRetweets*100)/ratings.size());
+		Analysis.logger.info("Correct RetweetCount Predictions: "+correctRetweets+"/"+ratings.size() + "  ("+percentage+"%)");
+		Analysis.logger.info("Correct RetweetCount > 0 Predictions: "+(correctRetweets-correct0Retweets)+"/"+(ratings.size()-amount0Retweets));
+		Analysis.logger.info("Correct RetweetCount == 0 Predictions: "+correct0Retweets+"/"+amount0Retweets);
+		Analysis.logger.info("====================================");
 	}
 }

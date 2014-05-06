@@ -1,6 +1,9 @@
 package helper;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 
@@ -17,7 +20,7 @@ public class DataManager
 		return userMap;
 	}
 	
-	public DataStructure readData(File file)
+	public static DataStructure readData(File file)
 	{
 		DataStructure dataStructure = new DataStructure();
 		
@@ -56,15 +59,34 @@ public class DataManager
 		return null;
 	}
 	
-	public void writeResults(String fileName, ArrayList<Rating> ratings)
+	public static void writeSolution(String fileName, ArrayList<Rating> ratings)
 	{	
 		try
 		{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
 	        
-	        for(Rating rating : ratings) 
+			bw.write("userid,tweetid,engagement\n");
+			
+			Collections.sort(ratings, new Comparator<Rating>()
+			{
+				@Override
+				public int compare(Rating r1, Rating r2)
+				{
+					Long v1 = Long.parseLong(r1.getTwitterUserId()),
+						 v2 = Long.parseLong(r2.getTwitterUserId());
+					int result = v2.compareTo(v1);
+					
+					if(result == 0)
+					{
+						return r2.getTweetId().compareTo(r1.getTweetId());
+					}
+					return result;
+				}
+			});
+			
+	        for(Rating rating : ratings)
 	        {
-	        	bw.write(rating.getResult());
+	        	bw.write(rating.getSolution()+"\n");
 	        }
 	        
 	        bw.close();
@@ -80,7 +102,7 @@ public class DataManager
 	}
 
 	
-	private Rating parseData(String line)
+	private static Rating parseData(String line)
 	{
 		int idx = line.indexOf('{');
 		
