@@ -1,6 +1,7 @@
 package view;
 
 import helper.Statics;
+import helper.TextAreaAppender;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -97,6 +98,7 @@ public class AnalizeFrame extends JFrame
 		
 		logArea = new JTextArea();
 		logArea.setEditable(false);
+		TextAreaAppender.setTextArea(logArea);
 		
 		logPane = new JScrollPane(logArea);
 		logPane.setPreferredSize(new Dimension (width, 50));

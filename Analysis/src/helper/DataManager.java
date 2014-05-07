@@ -1,7 +1,6 @@
 package helper;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
@@ -46,8 +45,7 @@ public class DataManager
 	        
 	        br.close();
 
-			Analysis.logger.info("readData finished.");
-			Analysis.logger.info(dataStructure);
+			Analysis.logger.info("read data finished - "+dataStructure);
 			
 	        return dataStructure;
 		}
@@ -130,11 +128,11 @@ public class DataManager
 	    	oos.writeObject(object);
 	
 	    	oos.close();
-	    	System.out.println("data stored to file '"+fileName+"'");
+	    	Analysis.logger.info("data stored to file '{}'",fileName);
 	    }
 		catch(ConcurrentModificationException ex)
 		{
-			System.err.println("ConcurrentModificationException on storing file: '"+fileName+"'");
+			Analysis.logger.error("ConcurrentModificationException on storing file: '{}'",fileName);
 		}
 	    catch(Exception ex)
 	    {
@@ -156,12 +154,12 @@ public class DataManager
 	    	
 	    	ois.close();
 	    	fis.close();
-	    	System.out.println("data loaded from file '"+fileName+"'");
+	    	Analysis.logger.info("data loaded from file '{}'",fileName);
 	    	return obj;
 	    }
 		catch(EOFException ex)
 		{
-			System.err.println("couldn't load '"+fileName+"'. File is corrupt");
+			Analysis.logger.error("couldn't load '{}'. File is corrupt",fileName);
 		}
 	    catch(Exception ex)
 	    {

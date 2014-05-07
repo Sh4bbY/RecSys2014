@@ -78,12 +78,11 @@ public class DataStructure
 			}
 		}
 
-		Analysis.logger.info(values.size() + " Elements to plot (after filtering)");
-		Analysis.logger.info("----------");
+		Analysis.logger.info("{} Elements to plot (after filtering)",values.size());
 		
 		for(int i=0; i<attributeIndices.length; i++)
 		{
-			Analysis.logger.info("Arithmetic Middle of Attribute '"+attributes[attributeIndices[i]].toString()+"' = "+arithmeticMiddle[i]/valuesArr.length);
+			Analysis.logger.info("Arithmetic average of attribute '{}' = {}", attributes[attributeIndices[i]].toString(), arithmeticMiddle[i]/valuesArr.length);
 		}
 		
 		
@@ -381,19 +380,19 @@ public class DataStructure
 		
 		Float percentage = new Float(new Float(correctEngagement*100)/ratings.size());
 		Analysis.logger.info("====================================");
-		Analysis.logger.info("Correct Engagement Predictions: "+correctEngagement+"/"+ratings.size() + "  ("+percentage+"%)");
-		Analysis.logger.info("Correct Engagement > 0 Predictions: "+(correctEngagement-correct0Engagement)+"/"+(ratings.size()-amount0Engagement));
-		Analysis.logger.info("Correct Engagement == 0 Predictions: "+correct0Engagement+"/"+amount0Engagement);
+		Analysis.logger.info("Correct Engagement Predictions: {}/{}  ({}%)", correctEngagement, ratings.size(), percentage);
+		Analysis.logger.info("Correct Engagement > 0 Predictions: {}/{}", correctEngagement-correct0Engagement, ratings.size()-amount0Engagement);
+		Analysis.logger.info("Correct Engagement == 0 Predictions: {}/{}", correct0Engagement, amount0Engagement);
 		Analysis.logger.info("--------------");
 		percentage = new Float(new Float(correctFavorites*100)/ratings.size());
-		Analysis.logger.info("Correct FavoriteCount Predictions: "+correctFavorites+"/"+ratings.size() + "  ("+percentage+"%)");
-		Analysis.logger.info("Correct FavoriteCount > 0 Predictions: "+(correctFavorites-correct0Favorites)+"/"+(ratings.size()-amount0Favorites));
-		Analysis.logger.info("Correct FavoriteCount == 0 Predictions: "+correct0Favorites+"/"+amount0Favorites);
+		Analysis.logger.info("Correct FavoriteCount Predictions: {}/{}  ({}%)", correctFavorites, ratings.size(), percentage);
+		Analysis.logger.info("Correct FavoriteCount > 0 Predictions:  {}/{}", correctFavorites-correct0Favorites, ratings.size()-amount0Favorites);
+		Analysis.logger.info("Correct FavoriteCount == 0 Predictions: {}/{}", correct0Favorites, amount0Favorites);
 		Analysis.logger.info("--------------");
 		percentage = new Float(new Float(correctRetweets*100)/ratings.size());
-		Analysis.logger.info("Correct RetweetCount Predictions: "+correctRetweets+"/"+ratings.size() + "  ("+percentage+"%)");
-		Analysis.logger.info("Correct RetweetCount > 0 Predictions: "+(correctRetweets-correct0Retweets)+"/"+(ratings.size()-amount0Retweets));
-		Analysis.logger.info("Correct RetweetCount == 0 Predictions: "+correct0Retweets+"/"+amount0Retweets);
+		Analysis.logger.info("Correct RetweetCount Predictions: {}/{}  ({}%)",correctRetweets, ratings.size(), percentage);
+		Analysis.logger.info("Correct RetweetCount > 0 Predictions: {}/{}",correctRetweets-correct0Retweets, ratings.size()-amount0Retweets);
+		Analysis.logger.info("Correct RetweetCount == 0 Predictions: {}/{}", correct0Retweets, amount0Retweets);
 		Analysis.logger.info("====================================");
 	}
 }
