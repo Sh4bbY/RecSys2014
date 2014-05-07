@@ -58,7 +58,16 @@ public class DataStructure
 		
 		double[][] valuesArr = new double[values.size()][attributeIndices.length];
 		
-		qSort.sort(values.toArray(valuesArr), config.getSortingAttrIndex(), config.isSortingASC());
+		int sortingIdx = config.getSortingAttrIndex();
+		for(int i=0; i < attributeIndices.length; i++)
+		{
+			if(attributeIndices[i] == sortingIdx)
+			{
+				sortingIdx = i;
+				break;
+			}
+		}
+		qSort.sort(values.toArray(valuesArr), sortingIdx, config.isSortingASC());
 		
 		
 		

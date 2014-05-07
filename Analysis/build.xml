@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="RecSys Analysis" default="makejar" basedir=".">
+	<target name="makejar">
+        <jar destfile="Analysis.jar" basedir="bin">
+            <zipgroupfileset dir="lib" includes="*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="main.Analysis"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="Analysis.jar" fork="true"/>
+    </target>
+</project>
